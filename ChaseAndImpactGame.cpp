@@ -7,7 +7,6 @@
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
 #include "PhysicsComponent.hpp"
 #include "CharacterControllerComponent.hpp"
-#include "BirdMovementComponent.hpp"
 
 using namespace std;
 using namespace sre;
@@ -77,45 +76,6 @@ void ChaseAndImpactGame::initLevel() {
     camObj->setPosition(windowSize*0.5f);
     camera->setFollowObject(player,{200,windowSize.y*0.5f});
 
-
-    auto birdObj = createGameObject();
-    birdObj->name = "Bird";
-    auto spriteComponent = birdObj->addComponent<SpriteComponent>();
-    auto bird = spriteAtlas->get("433.png");
-    bird.setFlip({true,false});
-    spriteComponent->setSprite(bird);
-    birdMovement = birdObj->addComponent<BirdMovementComponent>().get();
-
-    birdMovement->setPositions({
-                                       {-50,350},
-                                       {0,300},
-                                       {50,350},
-                                       {100,400},
-                                       {150,300},
-                                       {200,200},
-                                       {250,300},
-                                       {300,400},
-                                       {350,350},
-                                       {400,300},
-                                       {450,350},
-                                       {500,400},
-                                       {550,350},
-                                       {600,300},
-                                       {650,350},
-                                       {700,400},
-                                       {750,350},
-                                       {800,300},
-                                       {850,350},
-                                       {900,400},
-                                       {950,350},
-                                       {1000,300},
-                                       {1050,350},
-                                       {1100,400},
-                                       {1150,350},
-                                       {1200,300},
-                                       {1250,350},
-                               });
-
     level->generateLevel();
 }
 
@@ -145,17 +105,6 @@ void ChaseAndImpactGame::render() {
         static Profiler profiler;
         profiler.update();
         profiler.gui(false);
-
-        std::vector<glm::vec3> lines;
-        for (int i=0;i<5000;i++){
-            float t = (i/5001.0f)*birdMovement->getNumberOfSegments();
-            float t1 = ((i+1)/5001.0f)*birdMovement->getNumberOfSegments();
-            auto p = birdMovement->computePositionAtTime(t);
-            auto p1 = birdMovement->computePositionAtTime(t1);
-            lines.push_back(glm::vec3(p,0));
-            lines.push_back(glm::vec3(p1,0));
-        }
-        rp.drawLines(lines);
     }
 
     auto pos = camera->getGameObject()->getPosition();
