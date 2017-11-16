@@ -7,6 +7,7 @@
 #include "Box2DDebugDraw.hpp"
 #include "Level.hpp"
 #include "BirdMovementComponent.hpp"
+#include "BoulderMovementComponent.hpp"
 
 class PhysicsComponent;
 
@@ -56,6 +57,7 @@ private:
     glm::vec4 backgroundColor;
     b2World * world = nullptr;
     BirdMovementComponent* birdMovement;
+	BoulderMovementComponent* boulderMovement; 
 	const float physicsScale = 100;
     void registerPhysicsComponent(PhysicsComponent *r);
     void deregisterPhysicsComponent(PhysicsComponent *r);

@@ -1,4 +1,5 @@
 #include <sre/Profiler.hpp>
+#include <iostream>
 #include "ChaseAndImpactGame.hpp"
 #include "GameObject.hpp"
 #include "sre/RenderPass.hpp"
@@ -8,6 +9,7 @@
 #include "PhysicsComponent.hpp"
 #include "CharacterControllerComponent.hpp"
 #include "BirdMovementComponent.hpp"
+#include "BoulderMovementComponent.hpp"
 
 using namespace std;
 using namespace sre;
@@ -85,6 +87,14 @@ void ChaseAndImpactGame::initLevel() {
     bird.setFlip({true,false});
     spriteComponent->setSprite(bird);
     birdMovement = birdObj->addComponent<BirdMovementComponent>().get();
+
+	auto boulderObj = createGameObject(); 
+	boulderObj->name = "Boulder"; 
+	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>(); 
+	auto boulder = spriteAtlas->get("334.png"); 
+	boulder.setFlip({ false, false });
+	boulderSpriteComponent->setSprite(boulder); 
+	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get(); 
 
     birdMovement->setPositions({
                                        {-50,350},
