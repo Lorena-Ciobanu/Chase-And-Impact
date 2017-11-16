@@ -30,6 +30,7 @@ public:
     static PlatformerGame* instance;
 
     static constexpr float32 timeStep = 1.0f / 60.0f;
+	
 private:
     sre::SDLRenderer r;
 
@@ -52,11 +53,10 @@ private:
     void updatePhysics();
 
     std::shared_ptr<Level> level;
-
     glm::vec4 backgroundColor;
     b2World * world = nullptr;
     BirdMovementComponent* birdMovement;
-    const float physicsScale = 100;
+	const float physicsScale = 100;
     void registerPhysicsComponent(PhysicsComponent *r);
     void deregisterPhysicsComponent(PhysicsComponent *r);
     std::map<b2Fixture*,PhysicsComponent *> physicsComponentLookup;
@@ -64,7 +64,7 @@ private:
     bool doDebugDraw = false;
     friend class PhysicsComponent;
     friend class Level;
-    friend class CharacterController;
+    friend class CharacterControllerComponent;
     friend class PlatformComponent;
 };
 

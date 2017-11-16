@@ -4,26 +4,27 @@
 
 #include <SDL_events.h>
 #include <iostream>
-#include "CharacterController.hpp"
+#include "CharacterControllerComponent.hpp"
 #include "GameObject.hpp"
 #include "SpriteComponent.hpp"
 #include "PhysicsComponent.hpp"
 #include "PlatformerGame.hpp"
 #include "SpriteComponent.hpp"
 
-CharacterController::CharacterController(GameObject *gameObject) : Component(gameObject) {
+CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObject, SDL_Keycode up, SDL_Keycode left, SDL_Keycode right) : Component(gameObject) {
 	characterPhysics = gameObject->addComponent<PhysicsComponent>();
-
+	UPKEY = up;
+	LEFTKEY = left;
+	RIGHTKEY = right;
 	auto physicsScale = PlatformerGame::instance->physicsScale;
 	radius = 10 / physicsScale;
 	characterPhysics->initCircle(b2_dynamicBody, radius, glm::vec2{ 1.5,1.5 }*Level::tileSize / physicsScale, 1);
 	characterPhysics->getFixture()->SetRestitution(0);
 	characterPhysics->fixRotation();
 	spriteComponent = gameObject->getComponent<SpriteComponent>();
-
 }
 
-bool CharacterController::onKey(SDL_Event &event) {
+bool CharacterControllerComponent::onKey(SDL_Event &event) {
 	switch (event.key.keysym.sym) {
 	case SDLK_SPACE:
 	{
@@ -47,7 +48,7 @@ bool CharacterController::onKey(SDL_Event &event) {
 	return false;
 }
 
-void CharacterController::update(float deltaTime) {
+void CharacterControllerComponent::update(float deltaTime) {
 	// raycast ignores any shape in the starting point
 	auto from = characterPhysics->getBody()->GetWorldCenter();
 	b2Vec2 to{ from.x,from.y - radius*1.3f };
@@ -73,24 +74,24 @@ void CharacterController::update(float deltaTime) {
 	updateSprite(deltaTime);
 }
 
-void CharacterController::jump() {
+void CharacterControllerComponent::jump() {
 	characterPhysics->addImpulse({ 0,jumpForce });
 }
 
-void CharacterController::onCollisionStart(PhysicsComponent *comp) {
+void CharacterControllerComponent::onCollisionStart(PhysicsComponent *comp) {
 
 }
 
-void CharacterController::onCollisionEnd(PhysicsComponent *comp) {
+void CharacterControllerComponent::onCollisionEnd(PhysicsComponent *comp) {
 
 }
 
-float32 CharacterController::ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction) {
+float32 CharacterControllerComponent::ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction) {
 	isGrounded = true;
 	return 0; // terminate raycast
 }
 
-void CharacterController::setSprites(sre::Sprite standing, sre::Sprite walk1, sre::Sprite walk2, sre::Sprite flyUp,
+void CharacterControllerComponent::setSprites(sre::Sprite standing, sre::Sprite walk1, sre::Sprite walk2, sre::Sprite flyUp,
 	sre::Sprite fly, sre::Sprite flyDown) {
 	this->standing = standing;
 	this->walk1 = walk1;
@@ -100,7 +101,7 @@ void CharacterController::setSprites(sre::Sprite standing, sre::Sprite walk1, sr
 	this->flyDown = flyDown;
 }
 
-void CharacterController::updateSprite(float deltaTime) {
+void CharacterControllerComponent::updateSprite(float deltaTime) {
 	if (left)
 	{
 		direction = false;

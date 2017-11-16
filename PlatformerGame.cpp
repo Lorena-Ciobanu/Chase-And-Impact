@@ -6,7 +6,7 @@
 #include "SpriteComponent.hpp"
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
 #include "PhysicsComponent.hpp"
-#include "CharacterController.hpp"
+#include "CharacterControllerComponent.hpp"
 #include "BirdMovementComponent.hpp"
 
 using namespace std;
@@ -55,7 +55,7 @@ void PlatformerGame::initLevel() {
     auto playerSpriteObj = spriteAtlas->get("19.png");
     playerSpriteObj.setPosition(glm::vec2{1.5,2.5}*Level::tileSize);
     playerSprite->setSprite(playerSpriteObj);
-    auto characterController = player->addComponent<CharacterController>();
+    auto characterController = player->addComponent<CharacterControllerComponent>();
     characterController->setSprites(
             spriteAtlas->get("19.png"),
             spriteAtlas->get("20.png"),

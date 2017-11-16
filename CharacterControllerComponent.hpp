@@ -5,9 +5,9 @@
 #include "SpriteComponent.hpp"
 #include "sre/Sprite.hpp"
 
-class CharacterController : public Component, public b2RayCastCallback {
+class CharacterControllerComponent : public Component, public b2RayCastCallback {
 public:
-    explicit CharacterController(GameObject *gameObject);
+    explicit CharacterControllerComponent(GameObject *gameObject, SDL_Keycode up, SDL_Keycode left, SDL_Keycode right);
 
     void setSprites(sre::Sprite standing,
                     sre::Sprite walk1,
@@ -39,6 +39,10 @@ private:
     sre::Sprite fly;
     sre::Sprite flyDown;
 
+	SDL_Keycode UPKEY;
+	SDL_Keycode LEFTKEY;
+	SDL_Keycode RIGHTKEY;
+
     std::shared_ptr<SpriteComponent> spriteComponent;
     std::shared_ptr<PhysicsComponent> characterPhysics;
     bool isGrounded = false;
@@ -50,4 +54,5 @@ private:
     bool left = false;
     bool right = false;
 	bool direction = true;
+
 };
