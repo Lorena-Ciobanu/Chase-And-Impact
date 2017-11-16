@@ -52,6 +52,15 @@ void ChaseAndImpactGame::initLevel() {
 	level->generateLevel();
 }
 
+/*
+* Used to initialize a player object.
+* std::string playerName: String name of the Object.
+* int spriteAtlastStartIndex: The Start Index of the sprite used.
+* glm::vec2 startPosition: The start position of the player object (Level::tileSize already factored in).
+* SDL_Keycode upKey: The key used to jump.
+* SDL_Keycode leftKey: The key used to go left.
+* SDL_Keycode rightKey: The key used to go right.
+*/
 void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition,
 	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
 	auto player = createGameObject();
