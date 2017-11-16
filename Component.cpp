@@ -18,15 +18,14 @@ void Component::update(float deltaTime) {
 }
 
 GameObject *Component::getGameObject() {
-	return gameObject;
+    return gameObject;
 }
 
 bool Component::onKey(SDL_Event &event) {
-	return false;
+    return false;
 }
 
 void Component::onCollisionStart(PhysicsComponent* comp) {
-	//something something darkside
 
 }
 
