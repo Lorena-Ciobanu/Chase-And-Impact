@@ -3,7 +3,7 @@
 //
 
 #include "SideScrollingCamera.hpp"
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 
 using namespace glm;
 
@@ -43,9 +43,9 @@ void SideScrollingCamera::setFollowObject(std::shared_ptr<GameObject> followObje
 void SideScrollingCamera::setZoomMode(bool zoomEnabled) {
     this->zoom = zoomEnabled;
     if (zoomEnabled){
-        camera.setOrthographicProjection(PlatformerGame::windowSize.y/4,-1,1);
+        camera.setOrthographicProjection(ChaseAndImpactGame::windowSize.y/4,-1,1);
     } else {
-        camera.setOrthographicProjection(PlatformerGame::windowSize.y/2,-1,1);
+        camera.setOrthographicProjection(ChaseAndImpactGame::windowSize.y/2,-1,1);
     }
 }
 

@@ -8,7 +8,7 @@
 #include "GameObject.hpp"
 #include "SpriteComponent.hpp"
 #include "PhysicsComponent.hpp"
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 #include "SpriteComponent.hpp"
 
 CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObject, SDL_Keycode up, SDL_Keycode left, SDL_Keycode right) : Component(gameObject) {
@@ -16,7 +16,7 @@ CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObjec
 	UPKEY = up;
 	LEFTKEY = left;
 	RIGHTKEY = right;
-	auto physicsScale = PlatformerGame::instance->physicsScale;
+	auto physicsScale = ChaseAndImpactGame::instance->physicsScale;
 	radius = 10 / physicsScale;
 	characterPhysics->initCircle(b2_dynamicBody, radius, glm::vec2{ 1.5,1.5 }*Level::tileSize / physicsScale, 1);
 	characterPhysics->getFixture()->SetRestitution(0);
@@ -53,7 +53,7 @@ void CharacterControllerComponent::update(float deltaTime) {
 	auto from = characterPhysics->getBody()->GetWorldCenter();
 	b2Vec2 to{ from.x,from.y - radius*1.3f };
 	isGrounded = false;
-	PlatformerGame::instance->world->RayCast(this, from, to);
+	ChaseAndImpactGame::instance->world->RayCast(this, from, to);
 
 	characterPhysics->fixRotation();
 	glm::vec2 movement{ 0,0 };

@@ -16,9 +16,9 @@ enum class GameState{
     GameOver
 };
 
-class PlatformerGame : public b2ContactListener {
+class ChaseAndImpactGame : public b2ContactListener {
 public:
-    PlatformerGame();
+    ChaseAndImpactGame();
 
     std::shared_ptr<GameObject> createGameObject();
     static const glm::vec2 windowSize;
@@ -27,7 +27,7 @@ public:
 
     void EndContact(b2Contact *contact) override;
 
-    static PlatformerGame* instance;
+    static ChaseAndImpactGame* instance;
 
     static constexpr float32 timeStep = 1.0f / 60.0f;
 	

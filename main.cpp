@@ -1,6 +1,6 @@
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 
 int main(){
-   new PlatformerGame();
+   new ChaseAndImpactGame();
    return 0;
 }

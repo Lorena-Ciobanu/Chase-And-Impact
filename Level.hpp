@@ -4,7 +4,7 @@
 #include <vector>
 #include <sre/SpriteAtlas.hpp>
 
-class PlatformerGame;
+class ChaseAndImpactGame;
 class GameObject;
 class PlatformComponent;
 
@@ -17,7 +17,7 @@ enum class TileCollider {
 
 class Level {
 public:
-    static std::shared_ptr<Level> createDefaultLevel(PlatformerGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas);
+    static std::shared_ptr<Level> createDefaultLevel(ChaseAndImpactGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas);
 
     void generateLevel();
     std::shared_ptr<PlatformComponent> addPlatform(int x, int y, int startSpriteId, int length, bool kinematic);
@@ -26,7 +26,7 @@ public:
     static constexpr float tileSize = 21;
 private:
     Level() = default;
-    PlatformerGame* game;
+    ChaseAndImpactGame* game;
     std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
 };
 

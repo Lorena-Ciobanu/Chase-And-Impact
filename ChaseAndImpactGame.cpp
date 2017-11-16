@@ -1,5 +1,5 @@
 #include <sre/Profiler.hpp>
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 #include "GameObject.hpp"
 #include "sre/RenderPass.hpp"
 #include "sre/Texture.hpp"
@@ -12,11 +12,11 @@
 using namespace std;
 using namespace sre;
 
-const glm::vec2 PlatformerGame::windowSize(800,600);
+const glm::vec2 ChaseAndImpactGame::windowSize(800,600);
 
-PlatformerGame* PlatformerGame::instance = nullptr;
+ChaseAndImpactGame* ChaseAndImpactGame::instance = nullptr;
 
-PlatformerGame::PlatformerGame()
+ChaseAndImpactGame::ChaseAndImpactGame()
         :debugDraw(physicsScale)
 {
     instance = this;
@@ -46,7 +46,7 @@ PlatformerGame::PlatformerGame()
     r.startEventLoop();
 }
 
-void PlatformerGame::initLevel() {
+void ChaseAndImpactGame::initLevel() {
     initPhysics();
 
     auto player = createGameObject();
@@ -113,7 +113,7 @@ void PlatformerGame::initLevel() {
     level->generateLevel();
 }
 
-void PlatformerGame::update(float time) {
+void ChaseAndImpactGame::update(float time) {
     updatePhysics();
 	if (time > 0.03) // if framerate approx 30 fps then run two physics steps
 	{
@@ -124,7 +124,7 @@ void PlatformerGame::update(float time) {
     }
 }
 
-void PlatformerGame::render() {
+void ChaseAndImpactGame::render() {
     auto rp = RenderPass::create()
             .withCamera(camera->getCamera())
             .withClearColor(true, backgroundColor)
@@ -164,7 +164,7 @@ void PlatformerGame::render() {
     }
 }
 
-void PlatformerGame::onKey(SDL_Event &event) {
+void ChaseAndImpactGame::onKey(SDL_Event &event) {
     for (auto & gameObject: sceneObjects) {
         for (auto & c : gameObject->getComponents()){
             bool consumed = c->onKey(event);
@@ -192,13 +192,13 @@ void PlatformerGame::onKey(SDL_Event &event) {
     }
 }
 
-std::shared_ptr<GameObject> PlatformerGame::createGameObject() {
+std::shared_ptr<GameObject> ChaseAndImpactGame::createGameObject() {
     auto obj = shared_ptr<GameObject>(new GameObject());
     sceneObjects.push_back(obj);
     return obj;
 }
 
-void PlatformerGame::updatePhysics() {
+void ChaseAndImpactGame::updatePhysics() {
 
     const int positionIterations = 4;
     const int velocityIterations = 12;
@@ -215,7 +215,7 @@ void PlatformerGame::updatePhysics() {
     }
 }
 
-void PlatformerGame::initPhysics() {
+void ChaseAndImpactGame::initPhysics() {
     float gravity = -9.8f; // 9.8 m/s2
     delete world;
     world = new b2World(b2Vec2(0,gravity));
@@ -226,17 +226,17 @@ void PlatformerGame::initPhysics() {
     }
 }
 
-void PlatformerGame::BeginContact(b2Contact *contact) {
+void ChaseAndImpactGame::BeginContact(b2Contact *contact) {
     b2ContactListener::BeginContact(contact);
     handleContact(contact, true);
 }
 
-void PlatformerGame::EndContact(b2Contact *contact) {
+void ChaseAndImpactGame::EndContact(b2Contact *contact) {
     b2ContactListener::EndContact(contact);
     handleContact(contact, false);
 }
 
-void PlatformerGame::deregisterPhysicsComponent(PhysicsComponent *r) {
+void ChaseAndImpactGame::deregisterPhysicsComponent(PhysicsComponent *r) {
     auto iter = physicsComponentLookup.find(r->getFixture());
     if (iter != physicsComponentLookup.end()){
         physicsComponentLookup.erase(iter);
@@ -245,11 +245,11 @@ void PlatformerGame::deregisterPhysicsComponent(PhysicsComponent *r) {
     }
 }
 
-void PlatformerGame::registerPhysicsComponent(PhysicsComponent *r) {
+void ChaseAndImpactGame::registerPhysicsComponent(PhysicsComponent *r) {
     physicsComponentLookup[r->getFixture()] = r;
 }
 
-void PlatformerGame::handleContact(b2Contact *contact, bool begin) {
+void ChaseAndImpactGame::handleContact(b2Contact *contact, bool begin) {
     auto fixA = contact->GetFixtureA();
     auto fixB = contact->GetFixtureB();
     PhysicsComponent* physA = physicsComponentLookup[fixA];

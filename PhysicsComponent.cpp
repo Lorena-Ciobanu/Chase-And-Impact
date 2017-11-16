@@ -5,16 +5,16 @@
 #include <Box2D/Box2D.h>
 #include <glm/gtx/norm.hpp>
 #include "PhysicsComponent.hpp"
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 
 PhysicsComponent::PhysicsComponent(GameObject *gameObject)
         : Component(gameObject)
 {
-    world = PlatformerGame::instance->world;
+    world = ChaseAndImpactGame::instance->world;
 }
 
 PhysicsComponent::~PhysicsComponent() {
-    PlatformerGame::instance->deregisterPhysicsComponent(this);
+    ChaseAndImpactGame::instance->deregisterPhysicsComponent(this);
 
     delete polygon;
     delete circle;
@@ -69,7 +69,7 @@ void PhysicsComponent::initCircle(b2BodyType type, float radius, glm::vec2 cente
     fxD.density = density;
     fixture = body->CreateFixture(&fxD);
 
-    PlatformerGame::instance->registerPhysicsComponent(this);
+    ChaseAndImpactGame::instance->registerPhysicsComponent(this);
 }
 
 void PhysicsComponent::initBox(b2BodyType type, glm::vec2 size, glm::vec2 center, float density) {
@@ -92,7 +92,7 @@ void PhysicsComponent::initBox(b2BodyType type, glm::vec2 size, glm::vec2 center
 
 
 
-    PlatformerGame::instance->registerPhysicsComponent(this);
+    ChaseAndImpactGame::instance->registerPhysicsComponent(this);
 }
 
 bool PhysicsComponent::isSensor() {
@@ -110,7 +110,7 @@ void PhysicsComponent::fixRotation() {
 void PhysicsComponent::moveTo(glm::vec2 pos) {
     glm::vec2 delta = pos - getPosition();
 
-    setLinearVelocity(delta*(1/PlatformerGame::timeStep));
+    setLinearVelocity(delta*(1/ChaseAndImpactGame::timeStep));
 }
 
 glm::vec2 PhysicsComponent::getPosition() {

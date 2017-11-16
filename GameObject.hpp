@@ -42,7 +42,7 @@ private:
     glm::vec2 position;
     float rotation;
 
-    friend class PlatformerGame;
+    friend class ChaseAndImpactGame;
 };
 
 // definition of the template member function addComponent

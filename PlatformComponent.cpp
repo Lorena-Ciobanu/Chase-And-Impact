@@ -6,19 +6,19 @@
 #include <iostream>
 #include <glm/ext.hpp>
 #include "PlatformComponent.hpp"
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 #include "SpriteComponent.hpp"
 #include "PhysicsComponent.hpp"
 
 PlatformComponent::PlatformComponent(GameObject *gameObject) : Component(gameObject) {
-    auto game = PlatformerGame::instance;
+    auto game = ChaseAndImpactGame::instance;
     physicsScale = game->physicsScale;
 }
 
 void PlatformComponent::init(std::shared_ptr<sre::SpriteAtlas> spriteAtlas, int x, int y, int startSpriteId, int width, bool kinematic) {
     this->kinematic = kinematic;
     this->width = width;
-    auto game = PlatformerGame::instance;
+    auto game = ChaseAndImpactGame::instance;
     auto spriteComponent = gameObject->addComponent<SpriteComponent>();
     auto sprite = spriteAtlas->get(std::to_string(startSpriteId)+".png");
     float tileSize = Level::tileSize;
@@ -52,7 +52,7 @@ void PlatformComponent::init(std::shared_ptr<sre::SpriteAtlas> spriteAtlas, int 
 
 void PlatformComponent::initWall(std::shared_ptr<sre::SpriteAtlas> spriteAtlas, int x, int y, int startSpriteId, int height) {
     this->kinematic = false; // walls cannot be moved
-    auto game = PlatformerGame::instance;
+    auto game = ChaseAndImpactGame::instance;
 
     auto spriteComponent = gameObject->addComponent<SpriteComponent>();
     auto sprite = spriteAtlas->get(std::to_string(startSpriteId+30)+".png");

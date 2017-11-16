@@ -3,14 +3,14 @@
 //
 
 #include "Level.hpp"
-#include "PlatformerGame.hpp"
+#include "ChaseAndImpactGame.hpp"
 #include "SpriteComponent.hpp"
 #include "PhysicsComponent.hpp"
 #include "PlatformComponent.hpp"
 #include "MovingPlatformComponent.hpp"
 
 
-std::shared_ptr<Level> Level::createDefaultLevel(PlatformerGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas) {
+std::shared_ptr<Level> Level::createDefaultLevel(ChaseAndImpactGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas) {
     std::shared_ptr<Level> res = std::shared_ptr<Level>(new Level());
 
     // todo initialize
