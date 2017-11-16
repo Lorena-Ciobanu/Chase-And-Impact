@@ -8,283 +8,238 @@
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
 #include "PhysicsComponent.hpp"
 #include "CharacterControllerComponent.hpp"
-#include "BirdMovementComponent.hpp"
 #include "BoulderMovementComponent.hpp"
 
 using namespace std;
 using namespace sre;
 
-const glm::vec2 ChaseAndImpactGame::windowSize(800,600);
+const glm::vec2 ChaseAndImpactGame::windowSize(800, 600);
 
 ChaseAndImpactGame* ChaseAndImpactGame::instance = nullptr;
 
 ChaseAndImpactGame::ChaseAndImpactGame()
-        :debugDraw(physicsScale)
+	:debugDraw(physicsScale)
 {
-    instance = this;
-    r.setWindowSize(windowSize);
-    bool useVsync = true;
-    r.init(SDL_INIT_EVERYTHING, SDL_WINDOW_OPENGL , useVsync);
+	instance = this;
+	r.setWindowSize(windowSize);
+	bool useVsync = true;
+	r.init(SDL_INIT_EVERYTHING, SDL_WINDOW_OPENGL, useVsync);
 
-    backgroundColor = glm::vec4(0.6,0.6,1,1);
+	backgroundColor = glm::vec4(0.6, 0.6, 1, 1);
 
-    spriteAtlas = SpriteAtlas::create("platformer-art-deluxe.json","platformer-art-deluxe.png");
+	spriteAtlas = SpriteAtlas::create("platformer-art-deluxe.json", "platformer-art-deluxe.png");
 
-    level = Level::createDefaultLevel(this, spriteAtlas);
+	level = Level::createDefaultLevel(this, spriteAtlas);
 
-    initLevel();
+	initLevel();
 
-    // setup callback functions
-    r.keyEvent = [&](SDL_Event& e){
-        onKey(e);
-    };
-    r.frameUpdate = [&](float deltaTime){
-        update(deltaTime);
-    };
-    r.frameRender = [&](){
-        render();
-    };
-    // start game loop
-    r.startEventLoop();
+	// setup callback functions
+	r.keyEvent = [&](SDL_Event& e) {
+		onKey(e);
+	};
+	r.frameUpdate = [&](float deltaTime) {
+		update(deltaTime);
+	};
+	r.frameRender = [&]() {
+		render();
+	};
+	// start game loop
+	r.startEventLoop();
 }
 
 void ChaseAndImpactGame::initLevel() {
-    initPhysics();
+	initPhysics();
+	initPlayerObject("Player", 19, glm::vec2{ 1.5,2.5 },
+		SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
+	level->generateLevel();
+}
 
-    auto player = createGameObject();
-    player->name = "Player";
-    auto playerSprite = player->addComponent<SpriteComponent>();
-    auto playerSpriteObj = spriteAtlas->get("19.png");
-    playerSpriteObj.setPosition(glm::vec2{1.5,2.5}*Level::tileSize);
-    playerSprite->setSprite(playerSpriteObj);
-	SDL_Keycode keyupevent = SDL_Keycode(SDLK_UP);
-	SDL_Keycode keyleftevent = SDL_Keycode(SDLK_LEFT);
-	SDL_Keycode keyrightevent = SDL_Keycode(SDLK_RIGHT);
+void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition,
+	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
+	auto player = createGameObject();
+	player->name = playerName;
+	auto playerSprite = player->addComponent<SpriteComponent>();
+	auto playerSpriteObj = spriteAtlas->get(std::to_string(spriteAtlasStartIndex) + ".png");
+	playerSpriteObj.setPosition(startPosition*Level::tileSize);
+	playerSprite->setSprite(playerSpriteObj);
 	auto characterController = player->addComponent<CharacterControllerComponent>();
 
-	characterController->setKeyCodes(keyupevent, keyleftevent, keyrightevent);
+	characterController->setKeyCodes(upKey, leftKey, rightKey);
 
-    characterController->setSprites(
-            spriteAtlas->get("19.png"),
-            spriteAtlas->get("20.png"),
-            spriteAtlas->get("21.png"),
-            spriteAtlas->get("26.png"),
-            spriteAtlas->get("27.png"),
-            spriteAtlas->get("28.png")
-    );
+	characterController->setSprites(
+		spriteAtlas->get(std::to_string(spriteAtlasStartIndex) + ".png"),
+		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 1) + ".png"),
+		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 2) + ".png"),
+		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 3) + ".png"),
+		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 4) + ".png"),
+		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 5) + ".png")
+	);
 
-    auto camObj = createGameObject();
-    camObj->name = "Camera";
-    camera = camObj->addComponent<SideScrollingCamera>();
-    camObj->setPosition(windowSize*0.5f);
-    camera->setFollowObject(player,{200,windowSize.y*0.5f});
+	// TODO put this in initLevel() when we got a boulder to follow
+	auto camObj = createGameObject();
+	camObj->name = "Camera";
+	camera = camObj->addComponent<SideScrollingCamera>();
+	camObj->setPosition(windowSize*0.5f);
+	camera->setFollowObject(player, { 200,windowSize.y*0.5f });
 
-
-    auto birdObj = createGameObject();
-    birdObj->name = "Bird";
-    auto spriteComponent = birdObj->addComponent<SpriteComponent>();
-    auto bird = spriteAtlas->get("433.png");
-    bird.setFlip({true,false});
-    spriteComponent->setSprite(bird);
-    birdMovement = birdObj->addComponent<BirdMovementComponent>().get();
-
-	auto boulderObj = createGameObject(); 
-	boulderObj->name = "Boulder"; 
-	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>(); 
-	auto boulder = spriteAtlas->get("334.png"); 
+	auto boulderObj = createGameObject();
+	boulderObj->name = "Boulder";
+	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
+	auto boulder = spriteAtlas->get("334.png");
 	boulder.setFlip({ false, false });
-	boulderSpriteComponent->setSprite(boulder); 
-	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get(); 
-
-    birdMovement->setPositions({
-                                       {-50,350},
-                                       {0,300},
-                                       {50,350},
-                                       {100,400},
-                                       {150,300},
-                                       {200,200},
-                                       {250,300},
-                                       {300,400},
-                                       {350,350},
-                                       {400,300},
-                                       {450,350},
-                                       {500,400},
-                                       {550,350},
-                                       {600,300},
-                                       {650,350},
-                                       {700,400},
-                                       {750,350},
-                                       {800,300},
-                                       {850,350},
-                                       {900,400},
-                                       {950,350},
-                                       {1000,300},
-                                       {1050,350},
-                                       {1100,400},
-                                       {1150,350},
-                                       {1200,300},
-                                       {1250,350},
-                               });
-
-    level->generateLevel();
+	boulderSpriteComponent->setSprite(boulder);
+	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
 }
 
 void ChaseAndImpactGame::update(float time) {
-    updatePhysics();
+	updatePhysics();
 	if (time > 0.03) // if framerate approx 30 fps then run two physics steps
 	{
 		updatePhysics();
 	}
-    for (int i=0;i<sceneObjects.size();i++){
-        sceneObjects[i]->update(time);
-    }
+	for (int i = 0; i < sceneObjects.size(); i++) {
+		sceneObjects[i]->update(time);
+	}
 }
 
 void ChaseAndImpactGame::render() {
-    auto rp = RenderPass::create()
-            .withCamera(camera->getCamera())
-            .withClearColor(true, backgroundColor)
-            .build();
+	auto rp = RenderPass::create()
+		.withCamera(camera->getCamera())
+		.withClearColor(true, backgroundColor)
+		.build();
 
-    if (doDebugDraw){
-        static Profiler profiler;
-        profiler.update();
-        profiler.gui(false);
+	if (doDebugDraw) {
+		static Profiler profiler;
+		profiler.update();
+		profiler.gui(false);
+	}
 
-        std::vector<glm::vec3> lines;
-        for (int i=0;i<5000;i++){
-            float t = (i/5001.0f)*birdMovement->getNumberOfSegments();
-            float t1 = ((i+1)/5001.0f)*birdMovement->getNumberOfSegments();
-            auto p = birdMovement->computePositionAtTime(t);
-            auto p1 = birdMovement->computePositionAtTime(t1);
-            lines.push_back(glm::vec3(p,0));
-            lines.push_back(glm::vec3(p1,0));
-        }
-        rp.drawLines(lines);
-    }
+	auto pos = camera->getGameObject()->getPosition();
 
-    auto pos = camera->getGameObject()->getPosition();
+	auto spriteBatchBuilder = SpriteBatch::create();
+	for (auto & go : sceneObjects) {
+		go->renderSprite(spriteBatchBuilder);
+	}
 
-    auto spriteBatchBuilder = SpriteBatch::create();
-    for (auto & go : sceneObjects){
-        go->renderSprite(spriteBatchBuilder);
-    }
+	auto sb = spriteBatchBuilder.build();
+	rp.draw(sb);
 
-    auto sb = spriteBatchBuilder.build();
-    rp.draw(sb);
-
-    if (doDebugDraw){
-        world->DrawDebugData();
-        rp.drawLines(debugDraw.getLines());
-        debugDraw.clear();
-    }
+	if (doDebugDraw) {
+		world->DrawDebugData();
+		rp.drawLines(debugDraw.getLines());
+		debugDraw.clear();
+	}
 }
 
 void ChaseAndImpactGame::onKey(SDL_Event &event) {
-    for (auto & gameObject: sceneObjects) {
-        for (auto & c : gameObject->getComponents()){
-            bool consumed = c->onKey(event);
-            if (consumed){
-                return;
-            }
-        }
-    }
+	for (auto & gameObject : sceneObjects) {
+		for (auto & c : gameObject->getComponents()) {
+			bool consumed = c->onKey(event);
+			if (consumed) {
+				return;
+			}
+		}
+	}
 
-    if (event.type == SDL_KEYDOWN){
-        switch (event.key.keysym.sym){
-            case SDLK_z:
-                camera->setZoomMode(!camera->isZoomMode());
-                break;
-            case SDLK_d:
-                // press 'd' for physics debug
-                doDebugDraw = !doDebugDraw;
-                if (doDebugDraw){
-                    world->SetDebugDraw(&debugDraw);
-                } else {
-                    world->SetDebugDraw(nullptr);
-                }
-                break;
-        }
-    }
+	if (event.type == SDL_KEYDOWN) {
+		switch (event.key.keysym.sym) {
+		case SDLK_z:
+			camera->setZoomMode(!camera->isZoomMode());
+			break;
+		case SDLK_d:
+			// press 'd' for physics debug
+			doDebugDraw = !doDebugDraw;
+			if (doDebugDraw) {
+				world->SetDebugDraw(&debugDraw);
+			}
+			else {
+				world->SetDebugDraw(nullptr);
+			}
+			break;
+		}
+	}
 }
 
 std::shared_ptr<GameObject> ChaseAndImpactGame::createGameObject() {
-    auto obj = shared_ptr<GameObject>(new GameObject());
-    sceneObjects.push_back(obj);
-    return obj;
+	auto obj = shared_ptr<GameObject>(new GameObject());
+	sceneObjects.push_back(obj);
+	return obj;
 }
 
 void ChaseAndImpactGame::updatePhysics() {
 
-    const int positionIterations = 4;
-    const int velocityIterations = 12;
-    world->Step(timeStep, velocityIterations, positionIterations);
+	const int positionIterations = 4;
+	const int velocityIterations = 12;
+	world->Step(timeStep, velocityIterations, positionIterations);
 
-    for (auto phys : physicsComponentLookup){
-        PhysicsComponent* physicsComponent = phys.second;
-        if (physicsComponent->isAutoUpdate() == false) continue;
-        auto position = physicsComponent->getBody()->GetPosition();
-        float angle = physicsComponent->getBody()->GetAngle();
-        auto gameObject = physicsComponent->getGameObject();
-        gameObject->setPosition(glm::vec2(position.x*physicsScale, position.y*physicsScale));
-        gameObject->setRotation(angle);
-    }
+	for (auto phys : physicsComponentLookup) {
+		PhysicsComponent* physicsComponent = phys.second;
+		if (physicsComponent->isAutoUpdate() == false) continue;
+		auto position = physicsComponent->getBody()->GetPosition();
+		float angle = physicsComponent->getBody()->GetAngle();
+		auto gameObject = physicsComponent->getGameObject();
+		gameObject->setPosition(glm::vec2(position.x*physicsScale, position.y*physicsScale));
+		gameObject->setRotation(angle);
+	}
 }
 
 void ChaseAndImpactGame::initPhysics() {
-    float gravity = -9.8f; // 9.8 m/s2
-    delete world;
-    world = new b2World(b2Vec2(0,gravity));
-    world->SetContactListener(this);
+	float gravity = -9.8f; // 9.8 m/s2
+	delete world;
+	world = new b2World(b2Vec2(0, gravity));
+	world->SetContactListener(this);
 
-    if (doDebugDraw){
-        world->SetDebugDraw(&debugDraw);
-    }
+	if (doDebugDraw) {
+		world->SetDebugDraw(&debugDraw);
+	}
 }
 
 void ChaseAndImpactGame::BeginContact(b2Contact *contact) {
-    b2ContactListener::BeginContact(contact);
-    handleContact(contact, true);
+	b2ContactListener::BeginContact(contact);
+	handleContact(contact, true);
 }
 
 void ChaseAndImpactGame::EndContact(b2Contact *contact) {
-    b2ContactListener::EndContact(contact);
-    handleContact(contact, false);
+	b2ContactListener::EndContact(contact);
+	handleContact(contact, false);
 }
 
 void ChaseAndImpactGame::deregisterPhysicsComponent(PhysicsComponent *r) {
-    auto iter = physicsComponentLookup.find(r->getFixture());
-    if (iter != physicsComponentLookup.end()){
-        physicsComponentLookup.erase(iter);
-    } else {
-        assert(false); // cannot find physics object
-    }
+	auto iter = physicsComponentLookup.find(r->getFixture());
+	if (iter != physicsComponentLookup.end()) {
+		physicsComponentLookup.erase(iter);
+	}
+	else {
+		assert(false); // cannot find physics object
+	}
 }
 
 void ChaseAndImpactGame::registerPhysicsComponent(PhysicsComponent *r) {
-    physicsComponentLookup[r->getFixture()] = r;
+	physicsComponentLookup[r->getFixture()] = r;
 }
 
 void ChaseAndImpactGame::handleContact(b2Contact *contact, bool begin) {
-    auto fixA = contact->GetFixtureA();
-    auto fixB = contact->GetFixtureB();
-    PhysicsComponent* physA = physicsComponentLookup[fixA];
-    PhysicsComponent* physB = physicsComponentLookup[fixB];
-    auto & aComponents = physA->getGameObject()->getComponents();
-    auto & bComponents = physB->getGameObject()->getComponents();
-    for (auto & c : aComponents){
-        if (begin){
-            c->onCollisionStart(physB);
-        } else {
-            c->onCollisionEnd(physB);
-        }
-    }
-    for (auto & c : bComponents){
-        if (begin){
-            c->onCollisionStart(physA);
-        } else {
-            c->onCollisionEnd(physA);
-        }
-    }
+	auto fixA = contact->GetFixtureA();
+	auto fixB = contact->GetFixtureB();
+	PhysicsComponent* physA = physicsComponentLookup[fixA];
+	PhysicsComponent* physB = physicsComponentLookup[fixB];
+	auto & aComponents = physA->getGameObject()->getComponents();
+	auto & bComponents = physB->getGameObject()->getComponents();
+	for (auto & c : aComponents) {
+		if (begin) {
+			c->onCollisionStart(physB);
+		}
+		else {
+			c->onCollisionEnd(physB);
+		}
+	}
+	for (auto & c : bComponents) {
+		if (begin) {
+			c->onCollisionStart(physA);
+		}
+		else {
+			c->onCollisionEnd(physA);
+		}
+	}
 }
 

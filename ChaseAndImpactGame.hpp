@@ -6,7 +6,6 @@
 #include "SideScrollingCamera.hpp"
 #include "Box2DDebugDraw.hpp"
 #include "Level.hpp"
-#include "BirdMovementComponent.hpp"
 #include "BoulderMovementComponent.hpp"
 
 class PhysicsComponent;
@@ -38,6 +37,9 @@ private:
     void initLevel();
     void initPhysics();
 
+	void initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition,
+						SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey);
+
     void update(float time);
 
     void render();
@@ -56,7 +58,6 @@ private:
     std::shared_ptr<Level> level;
     glm::vec4 backgroundColor;
     b2World * world = nullptr;
-    BirdMovementComponent* birdMovement;
 	BoulderMovementComponent* boulderMovement; 
 	const float physicsScale = 100;
     void registerPhysicsComponent(PhysicsComponent *r);
