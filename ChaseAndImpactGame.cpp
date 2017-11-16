@@ -119,6 +119,11 @@ void ChaseAndImpactGame::initLevel() {
     level->generateLevel();
 }
 
+void ChaseAndImpactGame::initPlayerObject(string playerName, sre::SpriteAtlas* atlas, glm::vec2 startPosition,
+	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
+
+}
+
 void ChaseAndImpactGame::update(float time) {
     updatePhysics();
 	if (time > 0.03) // if framerate approx 30 fps then run two physics steps

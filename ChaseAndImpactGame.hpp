@@ -37,6 +37,9 @@ private:
     void initLevel();
     void initPhysics();
 
+	void initPlayerObject(string playerName, sre::SpriteAtlas* atlas, glm::vec2 startPosition,
+						SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey);
+
     void update(float time);
 
     void render();
