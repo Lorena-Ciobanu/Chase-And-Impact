@@ -6,7 +6,6 @@
 #include "SideScrollingCamera.hpp"
 #include "Box2DDebugDraw.hpp"
 #include "Level.hpp"
-#include "BirdMovementComponent.hpp"
 
 class PhysicsComponent;
 
@@ -55,7 +54,6 @@ private:
     std::shared_ptr<Level> level;
     glm::vec4 backgroundColor;
     b2World * world = nullptr;
-    BirdMovementComponent* birdMovement;
 	const float physicsScale = 100;
     void registerPhysicsComponent(PhysicsComponent *r);
     void deregisterPhysicsComponent(PhysicsComponent *r);
