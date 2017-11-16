@@ -36,7 +36,7 @@ private:
     void initLevel();
     void initPhysics();
 
-	void initPlayerObject(std::string playerName, std::string startAtlasSpriteName, glm::vec2 startPosition,
+	void initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition,
 						SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey);
 
     void update(float time);
