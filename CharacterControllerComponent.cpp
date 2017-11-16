@@ -25,24 +25,19 @@ CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObjec
 }
 
 bool CharacterControllerComponent::onKey(SDL_Event &event) {
-	switch (event.key.keysym.sym) {
-	case SDLK_SPACE:
+	if (event.key.keysym.sym == UPKEY)
 	{
 		if (isGrounded && event.type == SDL_KEYDOWN) { // prevents double jump
 			jump();
 		}
 	}
-	break;
-	case SDLK_LEFT:
+	else if (event.key.keysym.sym == LEFTKEY)
 	{
 		left = event.type == SDL_KEYDOWN;
 	}
-	break;
-	case SDLK_RIGHT:
+	else if (event.key.keysym.sym == RIGHTKEY)
 	{
 		right = event.type == SDL_KEYDOWN;
-	}
-	break;
 	}
 
 	return false;
