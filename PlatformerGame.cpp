@@ -55,7 +55,13 @@ void PlatformerGame::initLevel() {
     auto playerSpriteObj = spriteAtlas->get("19.png");
     playerSpriteObj.setPosition(glm::vec2{1.5,2.5}*Level::tileSize);
     playerSprite->setSprite(playerSpriteObj);
-    auto characterController = player->addComponent<CharacterControllerComponent>();
+	SDL_Keycode keyupevent = SDL_Keycode(SDLK_UP);
+	SDL_Keycode keyleftevent = SDL_Keycode(SDLK_LEFT);
+	SDL_Keycode keyrightevent = SDL_Keycode(SDLK_RIGHT);
+	auto characterController = player->addComponent<CharacterControllerComponent>();
+
+	characterController->setKeyCodes(keyupevent, keyleftevent, keyrightevent);
+
     characterController->setSprites(
             spriteAtlas->get("19.png"),
             spriteAtlas->get("20.png"),

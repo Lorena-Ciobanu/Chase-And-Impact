@@ -11,11 +11,8 @@
 #include "PlatformerGame.hpp"
 #include "SpriteComponent.hpp"
 
-CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObject, SDL_Keycode up, SDL_Keycode left, SDL_Keycode right) : Component(gameObject) {
+CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObject) : Component(gameObject) {
 	characterPhysics = gameObject->addComponent<PhysicsComponent>();
-	UPKEY = up;
-	LEFTKEY = left;
-	RIGHTKEY = right;
 	auto physicsScale = PlatformerGame::instance->physicsScale;
 	radius = 10 / physicsScale;
 	characterPhysics->initCircle(b2_dynamicBody, radius, glm::vec2{ 1.5,1.5 }*Level::tileSize / physicsScale, 1);
@@ -84,6 +81,12 @@ void CharacterControllerComponent::onCollisionEnd(PhysicsComponent *comp) {
 float32 CharacterControllerComponent::ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction) {
 	isGrounded = true;
 	return 0; // terminate raycast
+}
+
+void CharacterControllerComponent::setKeyCodes(SDL_Keycode up, SDL_Keycode left, SDL_Keycode right) {
+	UPKEY = up;
+	LEFTKEY = left;
+	RIGHTKEY = right;
 }
 
 void CharacterControllerComponent::setSprites(sre::Sprite standing, sre::Sprite walk1, sre::Sprite walk2, sre::Sprite flyUp,
