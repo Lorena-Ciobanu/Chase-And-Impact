@@ -47,41 +47,37 @@ ChaseAndImpactGame::ChaseAndImpactGame()
 
 void ChaseAndImpactGame::initLevel() {
     initPhysics();
-
-    auto player = createGameObject();
-    player->name = "Player";
-    auto playerSprite = player->addComponent<SpriteComponent>();
-    auto playerSpriteObj = spriteAtlas->get("19.png");
-    playerSpriteObj.setPosition(glm::vec2{1.5,2.5}*Level::tileSize);
-    playerSprite->setSprite(playerSpriteObj);
-	SDL_Keycode keyupevent = SDL_Keycode(SDLK_UP);
-	SDL_Keycode keyleftevent = SDL_Keycode(SDLK_LEFT);
-	SDL_Keycode keyrightevent = SDL_Keycode(SDLK_RIGHT);
-	auto characterController = player->addComponent<CharacterControllerComponent>();
-
-	characterController->setKeyCodes(keyupevent, keyleftevent, keyrightevent);
-
-    characterController->setSprites(
-            spriteAtlas->get("19.png"),
-            spriteAtlas->get("20.png"),
-            spriteAtlas->get("21.png"),
-            spriteAtlas->get("26.png"),
-            spriteAtlas->get("27.png"),
-            spriteAtlas->get("28.png")
-    );
-
-    auto camObj = createGameObject();
-    camObj->name = "Camera";
-    camera = camObj->addComponent<SideScrollingCamera>();
-    camObj->setPosition(windowSize*0.5f);
-    camera->setFollowObject(player,{200,windowSize.y*0.5f});
-
+	initPlayerObject("Player", "19.png", glm::vec2{ 1.5,2.5 }, 
+		SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
     level->generateLevel();
 }
 
-void ChaseAndImpactGame::initPlayerObject(string playerName, sre::SpriteAtlas* atlas, glm::vec2 startPosition,
+void ChaseAndImpactGame::initPlayerObject(std::string playerName, std::string startAtlasSpriteName, glm::vec2 startPosition,
 	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
+	auto player = createGameObject();
+	player->name = playerName;
+	auto playerSprite = player->addComponent<SpriteComponent>();
+	auto playerSpriteObj = spriteAtlas->get(startAtlasSpriteName);
+	playerSpriteObj.setPosition(startPosition*Level::tileSize);
+	playerSprite->setSprite(playerSpriteObj);
+	auto characterController = player->addComponent<CharacterControllerComponent>();
 
+	characterController->setKeyCodes(upKey, leftKey, rightKey);
+
+	characterController->setSprites(
+		spriteAtlas->get("19.png"),
+		spriteAtlas->get("20.png"),
+		spriteAtlas->get("21.png"),
+		spriteAtlas->get("26.png"),
+		spriteAtlas->get("27.png"),
+		spriteAtlas->get("28.png")
+	);
+
+	auto camObj = createGameObject();
+	camObj->name = "Camera";
+	camera = camObj->addComponent<SideScrollingCamera>();
+	camObj->setPosition(windowSize*0.5f);
+	camera->setFollowObject(player,{200,windowSize.y*0.5f});
 }
 
 void ChaseAndImpactGame::update(float time) {
