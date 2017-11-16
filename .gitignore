@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+CharacterControllerComponent_REMOTE_8052.cpp
+CharacterControllerComponent_LOCAL_8052.cpp
+CharacterControllerComponent_BASE_8052.cpp
+CharacterControllerComponent_BACKUP_8052.cpp

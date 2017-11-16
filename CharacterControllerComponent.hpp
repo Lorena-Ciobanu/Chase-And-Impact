@@ -7,7 +7,9 @@
 
 class CharacterControllerComponent : public Component, public b2RayCastCallback {
 public:
-    explicit CharacterControllerComponent(GameObject *gameObject, SDL_Keycode up, SDL_Keycode left, SDL_Keycode right);
+    explicit CharacterControllerComponent(GameObject *gameObject);
+
+	void setKeyCodes(SDL_Keycode up, SDL_Keycode left, SDL_Keycode right);
 
     void setSprites(sre::Sprite standing,
                     sre::Sprite walk1,
