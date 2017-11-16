@@ -1,4 +1,5 @@
 #include <sre/Profiler.hpp>
+#include <iostream>
 #include "ChaseAndImpactGame.hpp"
 #include "GameObject.hpp"
 #include "sre/RenderPass.hpp"
@@ -7,6 +8,7 @@
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
 #include "PhysicsComponent.hpp"
 #include "CharacterControllerComponent.hpp"
+#include "BoulderMovementComponent.hpp"
 
 using namespace std;
 using namespace sre;
@@ -88,6 +90,14 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	camera = camObj->addComponent<SideScrollingCamera>();
 	camObj->setPosition(windowSize*0.5f);
 	camera->setFollowObject(player, { 200,windowSize.y*0.5f });
+
+	auto boulderObj = createGameObject();
+	boulderObj->name = "Boulder";
+	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
+	auto boulder = spriteAtlas->get("334.png");
+	boulder.setFlip({ false, false });
+	boulderSpriteComponent->setSprite(boulder);
+	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
 }
 
 void ChaseAndImpactGame::update(float time) {
