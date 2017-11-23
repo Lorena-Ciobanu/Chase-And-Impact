@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Component.hpp"
 #include "Particle.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/random.hpp"
@@ -11,9 +12,10 @@
 #include <sre/RenderPass.hpp>
 #include <sre/Mesh.hpp>
 
-class ParticleSystem {
+class ParticleSystemComponent : public Component {
 public:
-    ParticleSystem(int particleCount, std::shared_ptr<sre::Texture> texture);
+    ParticleSystemComponent(GameObject *gameObject);
+	void init(int particleCount, std::shared_ptr<sre::Texture> texture);
     void update(float deltaTime);
 
     void draw(sre::RenderPass& pr, glm::mat4 transform = glm::mat4(1));
@@ -44,12 +46,12 @@ private:
     float emissions = 0;
     int particleIndex = 0;
     std::vector<Particle> particles;
-    std::shared_ptr<sre::Texture> texture;
     std::shared_ptr<sre::Mesh> mesh;
     std::vector<glm::vec3> positions;
     std::vector<glm::vec4> colors;
     std::vector<float> sizes;
     std::vector<glm::vec4> uvs;
+	std::shared_ptr<sre::Texture> texture;
 };
 
 
