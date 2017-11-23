@@ -21,6 +21,7 @@ std::shared_ptr<Level> Level::createDefaultLevel(ChaseAndImpactGame* game, std::
 }
 
 void Level::generateLevel() {
+	// TODO Here is where you have to change the "startSpriteId" parameter in order to change over to the new sprites. 
     // start wall
     addWall(-1, 0, 2, 10);
 
