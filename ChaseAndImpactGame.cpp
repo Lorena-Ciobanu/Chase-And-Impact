@@ -1,5 +1,6 @@
 #include <sre/Profiler.hpp>
 #include <iostream>
+#include "glm/gtx/transform.hpp"
 #include "ChaseAndImpactGame.hpp"
 #include "GameObject.hpp"
 #include "sre/RenderPass.hpp"
@@ -9,6 +10,7 @@
 #include "PhysicsComponent.hpp"
 #include "CharacterControllerComponent.hpp"
 #include "BoulderMovementComponent.hpp"
+#include "ParticleSystemComponent.hpp"
 
 using namespace std;
 using namespace sre;
@@ -24,6 +26,9 @@ ChaseAndImpactGame::ChaseAndImpactGame()
 	r.setWindowSize(windowSize);
 	bool useVsync = true;
 	r.init(SDL_INIT_EVERYTHING, SDL_WINDOW_OPENGL, useVsync);
+
+	textures.push_back(Texture::getSphereTexture());
+	textures.push_back(Texture::getWhiteTexture());
 
 	backgroundColor = glm::vec4(0.6, 0.6, 1, 1);
 
@@ -72,7 +77,10 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	playerSpriteObj.setPosition(startPosition*Level::tileSize);
 	playerSprite->setSprite(playerSpriteObj);
 	auto characterController = player->addComponent<CharacterControllerComponent>();
-
+	auto particleSystem = player->addComponent<ParticleSystemComponent>();
+	particleSystem->init(500, textures[0]);
+	particleSystem->gravity = { 0,-.2,0 };
+	
 	characterController->setKeyCodes(upKey, leftKey, rightKey);
 
 	characterController->setSprites(
@@ -128,6 +136,11 @@ void ChaseAndImpactGame::render() {
 	auto spriteBatchBuilder = SpriteBatch::create();
 	for (auto & go : sceneObjects) {
 		go->renderSprite(spriteBatchBuilder);
+		auto particle = go->getComponent<ParticleSystemComponent>();
+		if (particle)
+		{
+			particle->draw(rp, glm::mat4(1));
+		}
 	}
 
 	auto sb = spriteBatchBuilder.build();
@@ -138,6 +151,7 @@ void ChaseAndImpactGame::render() {
 		rp.drawLines(debugDraw.getLines());
 		debugDraw.clear();
 	}
+
 }
 
 void ChaseAndImpactGame::onKey(SDL_Event &event) {

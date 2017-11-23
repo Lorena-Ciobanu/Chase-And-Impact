@@ -50,6 +50,7 @@ private:
 
     std::shared_ptr<SideScrollingCamera> camera;
     std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
+	std::vector<std::shared_ptr<sre::Texture>> textures;
 
     std::vector<std::shared_ptr<GameObject>> sceneObjects;
 
@@ -58,7 +59,7 @@ private:
     std::shared_ptr<Level> level;
     glm::vec4 backgroundColor;
     b2World * world = nullptr;
-	BoulderMovementComponent* boulderMovement; 
+	BoulderMovementComponent* boulderMovement;
 	const float physicsScale = 100;
     void registerPhysicsComponent(PhysicsComponent *r);
     void deregisterPhysicsComponent(PhysicsComponent *r);

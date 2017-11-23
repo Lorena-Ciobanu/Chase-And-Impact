@@ -16,5 +16,5 @@ public:
     int getIndex();
 private:
     int index;
-    friend class ParticleSystem;
+    friend class ParticleSystemComponent;
 };
