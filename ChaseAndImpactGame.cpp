@@ -54,8 +54,25 @@ ChaseAndImpactGame::ChaseAndImpactGame()
 
 void ChaseAndImpactGame::initLevel() {
 	initPhysics();
-	initPlayerObject("Player", 19, glm::vec2{ 1.5,2.5 },
+	initPlayerObject("Player 1", 19, glm::vec2{ 1.5,2.5 },
 		SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
+	initPlayerObject("Player 2", 19, glm::vec2{ 1.5,2.5 },
+		SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
+
+	auto boulderObj = createGameObject();
+	boulderObj->name = "Boulder";
+	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
+	auto boulder = spriteAtlas->get("334.png");
+	boulder.setFlip({ false, false });
+	boulderSpriteComponent->setSprite(boulder);
+	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
+	boulderMovement->CanMove = false;
+
+	auto camObj = createGameObject();
+	camObj->name = "Camera";
+	camera = camObj->addComponent<SideScrollingCamera>();
+	camObj->setPosition(windowSize*0.5f);
+	camera->setFollowObject(boulderObj, { 200,windowSize.y*0.5f });
 	level->generateLevel();
 }
 
@@ -80,6 +97,7 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	auto particleSystem = player->addComponent<ParticleSystemComponent>();
 	particleSystem->init(500, textures[0]);
 	particleSystem->gravity = { 0,-.2,0 };
+	particleSystem->lifeSpan = 2.0f;
 	
 	characterController->setKeyCodes(upKey, leftKey, rightKey);
 
@@ -91,21 +109,6 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 4) + ".png"),
 		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 5) + ".png")
 	);
-
-	// TODO put this in initLevel() when we got a boulder to follow
-	auto camObj = createGameObject();
-	camObj->name = "Camera";
-	camera = camObj->addComponent<SideScrollingCamera>();
-	camObj->setPosition(windowSize*0.5f);
-	camera->setFollowObject(player, { 200,windowSize.y*0.5f });
-
-	auto boulderObj = createGameObject();
-	boulderObj->name = "Boulder";
-	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
-	auto boulder = spriteAtlas->get("334.png");
-	boulder.setFlip({ false, false });
-	boulderSpriteComponent->setSprite(boulder);
-	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
 }
 
 void ChaseAndImpactGame::update(float time) {
@@ -169,8 +172,8 @@ void ChaseAndImpactGame::onKey(SDL_Event &event) {
 		case SDLK_z:
 			camera->setZoomMode(!camera->isZoomMode());
 			break;
-		case SDLK_d:
-			// press 'd' for physics debug
+		case SDLK_p:
+			// press 'p' for physics debug
 			doDebugDraw = !doDebugDraw;
 			if (doDebugDraw) {
 				world->SetDebugDraw(&debugDraw);

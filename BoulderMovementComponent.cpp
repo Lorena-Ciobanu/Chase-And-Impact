@@ -10,6 +10,9 @@
 BoulderMovementComponent::BoulderMovementComponent(GameObject *gameObject) : Component(gameObject) {}
 
 void BoulderMovementComponent::update(float deltaTime) {
-    time += deltaTime;
-    gameObject->setPosition(glm::vec2((speed*time + initialx)*Level::tileSize, initialy*Level::tileSize));
+	if (CanMove == true)
+	{
+		time += deltaTime;
+		gameObject->setPosition(glm::vec2((speed*time + initialx)*Level::tileSize, initialy*Level::tileSize));
+	}
 }

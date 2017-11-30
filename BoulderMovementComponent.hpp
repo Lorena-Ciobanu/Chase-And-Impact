@@ -14,6 +14,7 @@ public:
 
     void update(float deltaTime) override;
 
+	bool CanMove = true;
 private:
     float time = 0;
 	float speed = 5.0f; 
