@@ -56,14 +56,20 @@ ChaseAndImpactGame::ChaseAndImpactGame()
 void ChaseAndImpactGame::initLevel() {
 	initPhysics();
 
+	auto camObj = createGameObject();
+	camObj->name = "Camera";
+	camera = camObj->addComponent<SideScrollingCamera>();
+	camObj->setPosition(windowSize*0.5f);
+	level->generateLevel();
+
 	auto boulderObj = createGameObject();
 	boulderObj->name = "Boulder";
 	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
-	auto boulder = spriteAtlas->get("334.png");
+	auto boulder = spriteAtlas->get("boulder.png");
 	boulder.setFlip({ false, false });
 	boulderSpriteComponent->setSprite(boulder);
 	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
-	boulderMovement->CanMove = false;
+	boulderMovement->CanMove = true;
 
 	auto camObj = createGameObject();
 	camObj->name = "Camera";
@@ -95,6 +101,7 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	player->name = playerName;
 	auto playerSprite = player->addComponent<SpriteComponent>();
 	auto playerSpriteObj = spriteAtlas->get(std::to_string(spriteAtlasStartIndex) + ".png");
+	player->position = startPosition*Level::tileSize; 
 	playerSprite->setSprite(playerSpriteObj);
 	auto characterController = player->addComponent<CharacterControllerComponent>();
 	characterController->init(physicsScale, 10, b2BodyType::b2_dynamicBody, startPosition, 1.0f);

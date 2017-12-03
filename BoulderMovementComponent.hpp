@@ -18,7 +18,8 @@ public:
 private:
     float time = 0;
 	float speed = 5.0f; 
-	float initialx = 1.5f;
-	float initialy = 3.5f;
+	float rotationSpeeed = 50.0f;
+	float initialx = 0.0f;
+	float initialy = 7.1f;
 };
 
