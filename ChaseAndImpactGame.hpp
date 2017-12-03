@@ -66,6 +66,8 @@ private:
     std::map<b2Fixture*,PhysicsComponent *> physicsComponentLookup;
     Box2DDebugDraw debugDraw;
     bool doDebugDraw = false;
+	std::shared_ptr<SideScrollingCamera> mainCam;
+
     friend class PhysicsComponent;
     friend class Level;
     friend class CharacterControllerComponent;

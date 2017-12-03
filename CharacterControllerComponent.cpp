@@ -12,13 +12,16 @@
 #include "SpriteComponent.hpp"
 
 CharacterControllerComponent::CharacterControllerComponent(GameObject *gameObject) : Component(gameObject) {
-	characterPhysics = gameObject->addComponent<PhysicsComponent>();
-	auto physicsScale = ChaseAndImpactGame::instance->physicsScale;
-	radius = 10 / physicsScale;
-	characterPhysics->initCircle(b2_dynamicBody, radius, glm::vec2{ 1.5,1.5 }*Level::tileSize / physicsScale, 1);
+	characterPhysics = gameObject->addComponent<PhysicsComponent>();	
+	spriteComponent = gameObject->getComponent<SpriteComponent>();
+}
+
+void CharacterControllerComponent::init(float physicsScale, float radius, b2BodyType bodyType, glm::vec2 center, float density)
+{
+	this->radius = radius / physicsScale;
+	characterPhysics->initCircle(bodyType, this->radius, center*Level::tileSize / physicsScale, density);
 	characterPhysics->getFixture()->SetRestitution(0);
 	characterPhysics->fixRotation();
-	spriteComponent = gameObject->getComponent<SpriteComponent>();
 }
 
 bool CharacterControllerComponent::onKey(SDL_Event &event) {

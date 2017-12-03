@@ -9,6 +9,8 @@ class CharacterControllerComponent : public Component, public b2RayCastCallback 
 public:
     explicit CharacterControllerComponent(GameObject *gameObject);
 
+	void init(float physicsScale, float radius, b2BodyType bodyType, glm::vec2 center, float density);
+
 	void setKeyCodes(SDL_Keycode up, SDL_Keycode left, SDL_Keycode right);
 
     void setSprites(sre::Sprite standing,
