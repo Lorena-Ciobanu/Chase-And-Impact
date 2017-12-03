@@ -15,4 +15,5 @@ void BoulderMovementComponent::update(float deltaTime) {
 		time += deltaTime;
 		gameObject->setPosition(glm::vec2((speed*time + initialx)*Level::tileSize, initialy*Level::tileSize));
 	}
+	gameObject->setRotation(gameObject->getRotation() - (deltaTime* this->rotationSpeeed));
 }

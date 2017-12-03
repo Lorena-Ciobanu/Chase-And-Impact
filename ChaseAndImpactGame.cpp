@@ -54,26 +54,27 @@ ChaseAndImpactGame::ChaseAndImpactGame()
 
 void ChaseAndImpactGame::initLevel() {
 	initPhysics();
-	initPlayerObject("Player 1", 19, glm::vec2{ 1.5,2.5 },
+	initPlayerObject("Player 1", 19, glm::vec2{ 200.5,2.5 },
 		SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
-	initPlayerObject("Player 2", 19, glm::vec2{ 1.5,2.5 },
+	initPlayerObject("Player 2", 19, glm::vec2{ 20.0,2.5 },
 		SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
-
-	auto boulderObj = createGameObject();
-	boulderObj->name = "Boulder";
-	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
-	auto boulder = spriteAtlas->get("334.png");
-	boulder.setFlip({ false, false });
-	boulderSpriteComponent->setSprite(boulder);
-	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
-	boulderMovement->CanMove = false;
 
 	auto camObj = createGameObject();
 	camObj->name = "Camera";
 	camera = camObj->addComponent<SideScrollingCamera>();
 	camObj->setPosition(windowSize*0.5f);
-	camera->setFollowObject(boulderObj, { 200,windowSize.y*0.5f });
 	level->generateLevel();
+
+	auto boulderObj = createGameObject();
+	boulderObj->name = "Boulder";
+	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
+	auto boulder = spriteAtlas->get("boulder.png");
+	boulder.setFlip({ false, false });
+	boulderSpriteComponent->setSprite(boulder);
+	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
+	boulderMovement->CanMove = true;
+
+	camera->setFollowObject(boulderObj, { 300,windowSize.y*0.5f });
 }
 
 /*
@@ -92,6 +93,7 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	auto playerSprite = player->addComponent<SpriteComponent>();
 	auto playerSpriteObj = spriteAtlas->get(std::to_string(spriteAtlasStartIndex) + ".png");
 	playerSpriteObj.setPosition(startPosition*Level::tileSize);
+	player->position = startPosition*Level::tileSize; 
 	playerSprite->setSprite(playerSpriteObj);
 	auto characterController = player->addComponent<CharacterControllerComponent>();
 	auto particleSystem = player->addComponent<ParticleSystemComponent>();
