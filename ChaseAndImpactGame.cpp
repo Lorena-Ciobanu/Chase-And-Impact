@@ -56,12 +56,6 @@ ChaseAndImpactGame::ChaseAndImpactGame()
 void ChaseAndImpactGame::initLevel() {
 	initPhysics();
 
-	auto camObj = createGameObject();
-	camObj->name = "Camera";
-	camera = camObj->addComponent<SideScrollingCamera>();
-	camObj->setPosition(windowSize*0.5f);
-	level->generateLevel();
-
 	auto boulderObj = createGameObject();
 	boulderObj->name = "Boulder";
 	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
