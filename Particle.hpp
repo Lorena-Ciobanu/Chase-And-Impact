@@ -4,17 +4,27 @@
 
 class Particle {
 public:
-    Particle();
+	Particle(glm::vec3& position, glm::vec4& color, float& size, glm::vec4& uv);
 
-    glm::vec3 position;
-    glm::vec3 velocity;
-    float rotation = 0;
-    float angularVelocity = 0;
-    float timeOfBirth = 0;
-    float normalizedAge = 0; // between 0.0 and 1.0
-    bool alive = false;
-    int getIndex();
+	// physics
+	glm::vec3& position;
+	glm::vec3 velocity;
+	float rotation = 0;
+	float angularVelocity = 0;
+
+	// lifetime
+	float timeOfBirth = 0;
+	float normalizedAge = 0; // between 0.0 and 1.0
+	bool alive = false;
+
+	// appearance
+	glm::vec4& color;
+	float& size;
+	glm::vec4& uv;
+
+	int getIndex();
+	void setIndex(int newIndex);
 private:
-    int index;
-    friend class ParticleSystemComponent;
+	int index;
+	friend class ParticleSystem;
 };
