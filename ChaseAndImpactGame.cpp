@@ -63,7 +63,7 @@ void ChaseAndImpactGame::initLevel() {
 	boulder.setFlip({ false, false });
 	boulderSpriteComponent->setSprite(boulder);
 	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
-	boulderMovement->CanMove = true;
+	boulderMovement->CanMove = false;
 
 	auto camObj = createGameObject();
 	camObj->name = "Camera";
@@ -72,9 +72,9 @@ void ChaseAndImpactGame::initLevel() {
 	camera->setFollowObject(boulderObj, { 200,windowSize.y*0.5f });
 	mainCam = camera;
 
-	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 },
+	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),
 		SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
-	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 },
+	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),
 		SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
 
 	level->generateLevel();
@@ -85,11 +85,12 @@ void ChaseAndImpactGame::initLevel() {
 * std::string playerName: String name of the Object.
 * int spriteAtlastStartIndex: The Start Index of the sprite used.
 * glm::vec2 startPosition: The start position of the player object (Level::tileSize already factored in).
+* ImVec4 nameplateColor: Vector deciding the color of the text appearing over the players head.
 * SDL_Keycode upKey: The key used to jump.
 * SDL_Keycode leftKey: The key used to go left.
 * SDL_Keycode rightKey: The key used to go right.
 */
-void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition,
+void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition, ImVec4 nameplateColor,
 	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
 	auto player = createGameObject();
 	player->name = playerName;
@@ -103,8 +104,9 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	particleSystem->init(500, textures[0]);
 	particleSystem->gravity = { 0,-.2,0 };
 	particleSystem->lifeSpan = 2.0f;
-	//auto namePlate = player->addComponent<NameplateComponent>();
-	//namePlate->init(playerName.c_str(), windowSize.x, windowSize.y, mainCam.get());
+	auto namePlate = player->addComponent<NameplateComponent>();
+	const char* nameS = player->name.c_str();
+	namePlate->init(nameS, windowSize.x, windowSize.y, 32.0f, nameplateColor, mainCam.get());
 	
 	characterController->setKeyCodes(upKey, leftKey, rightKey);
 
@@ -151,12 +153,11 @@ void ChaseAndImpactGame::render() {
 		{
 			particle->draw(rp, glm::mat4(1));
 		}
-		//TODO Ask teacher for help with this. Doesn't currently work right.
-		//auto namePlate = go->getComponent<NameplateComponent>();
-		//if (namePlate)
-		//{
-		//	namePlate->render();
-		//}
+		auto namePlate = go->getComponent<NameplateComponent>();
+		if (namePlate)
+		{
+			namePlate->render();
+		}
 	}
 
 	auto sb = spriteBatchBuilder.build();
