@@ -48,25 +48,24 @@ private:
 
     void handleContact(b2Contact *contact, bool begin);
 
-    std::shared_ptr<SideScrollingCamera> camera;
-    std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
+	void updatePhysics();
+
+	std::shared_ptr<SideScrollingCamera> camera;
+	std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
 	std::vector<std::shared_ptr<sre::Texture>> textures;
-
-    std::vector<std::shared_ptr<GameObject>> sceneObjects;
-
-    void updatePhysics();
-
-    std::shared_ptr<Level> level;
-    glm::vec4 backgroundColor;
-    b2World * world = nullptr;
+	std::vector<std::shared_ptr<GameObject>> sceneObjects;
+	std::shared_ptr<Level> level;
+	glm::vec4 backgroundColor;
+	b2World * world = nullptr;
 	BoulderMovementComponent* boulderMovement;
+
 	const float physicsScale = 100;
-    void registerPhysicsComponent(PhysicsComponent *r);
-    void deregisterPhysicsComponent(PhysicsComponent *r);
-    std::map<b2Fixture*,PhysicsComponent *> physicsComponentLookup;
-    Box2DDebugDraw debugDraw;
-    bool doDebugDraw = false;
-	std::shared_ptr<SideScrollingCamera> mainCam;
+	void registerPhysicsComponent(PhysicsComponent *r);
+	void deregisterPhysicsComponent(PhysicsComponent *r);
+	std::map<b2Fixture*, PhysicsComponent *> physicsComponentLookup;
+
+	Box2DDebugDraw debugDraw;
+	bool doDebugDraw = false;
 
     friend class PhysicsComponent;
     friend class Level;

@@ -67,10 +67,9 @@ void ChaseAndImpactGame::initLevel() {
 
 	auto camObj = createGameObject();
 	camObj->name = "Camera";
-	camera = camObj->addComponent<SideScrollingCamera>();
 	camObj->setPosition(windowSize*0.5f);
+	camera = camObj->addComponent<SideScrollingCamera>();
 	camera->setFollowObject(boulderObj, { 200,windowSize.y*0.5f });
-	mainCam = camera;
 
 	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),
 		SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
@@ -106,7 +105,7 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	particleSystem->lifeSpan = 2.0f;
 	auto namePlate = player->addComponent<NameplateComponent>();
 	const char* nameS = player->name.c_str();
-	namePlate->init(nameS, windowSize.x, windowSize.y, 32.0f, nameplateColor, mainCam.get());
+	namePlate->init(nameS, windowSize.x, windowSize.y, 32.0f, nameplateColor, camera.get());
 	
 	characterController->setKeyCodes(upKey, leftKey, rightKey);
 
