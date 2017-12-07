@@ -44,7 +44,7 @@ void Level::generateLevel() {
     addPlatform(40, 3, 2, 5, true);
 
     // end wall
-    addWall(100, 0, 2, 10);
+    addWall(100, 1, 2, 20);
 }
 
 std::shared_ptr<PlatformComponent> Level::addPlatform(int x, int y, int startSpriteId, int length, bool kinematic) {
