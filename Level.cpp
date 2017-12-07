@@ -23,17 +23,17 @@ std::shared_ptr<Level> Level::createDefaultLevel(ChaseAndImpactGame* game, std::
 void Level::generateLevel() {
 	// TODO Here is where you have to change the "startSpriteId" parameter in order to change over to the new sprites. 
     // start wall
-    addWall(-1, 0, 2, 10);
+	addWall(-7, 1, 2, 20);
 
     // floor
-    addPlatform(0, 0, 2, 100, false);
+    addPlatform(-7, 0, 2, 100, false);
     // ceil
-    addPlatform(0, 20, 2, 100, false);
+    addPlatform(-7, 20, 2, 100, false);
 
-    auto movingPlatform = addPlatform(10, 3, 2, 5, true);
+  /*  auto movingPlatform = addPlatform(10, 3, 2, 5, true);
     auto movingPlatformComponent = movingPlatform->getGameObject()->addComponent<MovingPlatformComponent>();
     movingPlatformComponent->setMovementStart({10,3});
-    movingPlatformComponent->setMovementEnd({10,5});
+    movingPlatformComponent->setMovementEnd({10,5}); */
 
     // add some more platforms
     addPlatform(15, 7, 2, 5, true);

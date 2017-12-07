@@ -20,8 +20,7 @@ const glm::vec2 ChaseAndImpactGame::windowSize(800, 600);
 
 ChaseAndImpactGame* ChaseAndImpactGame::instance = nullptr;
 
-ChaseAndImpactGame::ChaseAndImpactGame()
-	:debugDraw(physicsScale)
+ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 {
 	instance = this;
 	r.setWindowSize(windowSize);
@@ -63,18 +62,18 @@ void ChaseAndImpactGame::initLevel() {
 	boulder.setFlip({ false, false });
 	boulderSpriteComponent->setSprite(boulder);
 	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
-	boulderMovement->CanMove = false;
+	boulderMovement->init(physicsScale, 130.0f, glm::vec2(0.0f, 7.1f),1.0f);
+	boulderMovement->CanMove = true;
 
 	auto camObj = createGameObject();
 	camObj->name = "Camera";
 	camObj->setPosition(windowSize*0.5f);
 	camera = camObj->addComponent<SideScrollingCamera>();
-	camera->setFollowObject(boulderObj, { 200,windowSize.y*0.5f });
+	camera->setFollowObject(boulderObj, { 245 ,windowSize.y*0.5f });
 
-	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),
-		SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
-	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),
-		SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
+
+	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
+	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
 
 	level->generateLevel();
 }
@@ -93,16 +92,22 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
 	auto player = createGameObject();
 	player->name = playerName;
+	player->position = startPosition*Level::tileSize;
+
 	auto playerSprite = player->addComponent<SpriteComponent>();
 	auto playerSpriteObj = spriteAtlas->get(std::to_string(spriteAtlasStartIndex) + ".png");
-	player->position = startPosition*Level::tileSize; 
 	playerSprite->setSprite(playerSpriteObj);
+	
+
 	auto characterController = player->addComponent<CharacterControllerComponent>();
 	characterController->init(physicsScale, 10, b2BodyType::b2_dynamicBody, startPosition, 1.0f);
+
 	auto particleSystem = player->addComponent<ParticleSystemComponent>();
 	particleSystem->init(500, textures[0]);
 	particleSystem->gravity = { 0,-.2,0 };
 	particleSystem->lifeSpan = 2.0f;
+
+
 	auto namePlate = player->addComponent<NameplateComponent>();
 	const char* nameS = player->name.c_str();
 	namePlate->init(nameS, windowSize.x, windowSize.y, 32.0f, nameplateColor, camera.get());
@@ -117,6 +122,8 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 4) + ".png"),
 		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 5) + ".png")
 	);
+
+	
 }
 
 void ChaseAndImpactGame::update(float time) {
@@ -183,7 +190,7 @@ void ChaseAndImpactGame::onKey(SDL_Event &event) {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_z:
-			camera->setZoomMode(!camera->isZoomMode());
+			camera->setZoomMode(!camera->isZoomMode());		//This is pretty cool
 			break;
 		case SDLK_p:
 			// press 'p' for physics debug
