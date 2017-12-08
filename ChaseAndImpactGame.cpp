@@ -60,9 +60,10 @@ void ChaseAndImpactGame::initLevel() {
 	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
 	auto boulder = spriteAtlas->get("boulder.png");
 	boulder.setFlip({ false, false });
+	boulder.setScale(glm::vec2(1.5f, 1.5f));
 	boulderSpriteComponent->setSprite(boulder);
 	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
-	boulderMovement->init(physicsScale, 130.0f, glm::vec2(0.0f, 7.1f),1.0f);
+	boulderMovement->init(physicsScale, 195.0f, glm::vec2(0.0f, 7.1f),1.0f);
 	boulderMovement->CanMove = true;
 
 	auto camObj = createGameObject();
