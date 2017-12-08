@@ -15,7 +15,8 @@ BoulderMovementComponent::BoulderMovementComponent(GameObject *gameObject) : Com
 void BoulderMovementComponent::init(float physicsScale, float radius, glm::vec2 center, float density)
 {
 	radius /= physicsScale;
-	boulderPhysics->initCircle(b2BodyType::b2_dynamicBody, radius, glm::vec2(initialx, initialy), 100.0f);
+	boulderPhysics->initCircle(b2BodyType::b2_kinematicBody, radius, glm::vec2(initialx, initialy), 100.0f);
+	boulderPhysics->setSensor(true); 
 
 }
 

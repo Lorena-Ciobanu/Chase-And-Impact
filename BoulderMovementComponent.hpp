@@ -22,7 +22,7 @@ private:
 	float speed = 2.0f; 
 	float rotationSpeeed = 50.0f;
 	float initialx = 0.0f;
-	float initialy = 0.5f;
+	float initialy = 2.12f;
 
 	/* Physics */
 	float radius = 130.0f;

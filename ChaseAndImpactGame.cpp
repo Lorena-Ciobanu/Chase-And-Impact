@@ -55,6 +55,10 @@ ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 void ChaseAndImpactGame::initLevel() {
 	initPhysics();
 
+	level->generateLevel();
+
+	// Adding the boulder to the game object array AFTER the level is generated means that the boulder will be drawn on top
+	// of the platforms instead of underneath them. 
 	auto boulderObj = createGameObject();
 	boulderObj->name = "Boulder";
 	auto boulderSpriteComponent = boulderObj->addComponent<SpriteComponent>();
@@ -72,11 +76,9 @@ void ChaseAndImpactGame::initLevel() {
 	camera = camObj->addComponent<SideScrollingCamera>();
 	camera->setFollowObject(boulderObj, { 245 ,windowSize.y*0.5f });
 
-
 	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
 	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
 
-	level->generateLevel();
 }
 
 /*
