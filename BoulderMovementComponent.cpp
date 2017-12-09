@@ -43,17 +43,6 @@ void BoulderMovementComponent::update(float deltaTime) {
 	}
 }
 
-/*
-void BoulderMovementComponent::update(float deltaTime) {
-	 if (CanMove == true)
-	{
-		time += deltaTime;
-		gameObject->setPosition(glm::vec2((speed*time + initialx)*Level::tileSize, initialy*Level::tileSize));
-	}
-	gameObject->setRotation(gameObject->getRotation() - (deltaTime* this->rotationSpeeed)); 
-} 
-*/
-
 void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp) {
 
 	auto compName = comp->getGameObject()->name;
@@ -62,7 +51,9 @@ void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp) {
 	{
 		auto playerSpriteRenderer = comp->getGameObject()->getComponent<SpriteComponent>();
 		comp->getGameObject()->removeComponent(playerSpriteRenderer);
+		
 		// TODO Maybe add a particle effect
+		CanMove = false;
 
 		ChaseAndImpactGame::endGame(compName); 
 	}
