@@ -17,17 +17,19 @@ public:
 	bool CanMove = true;
 	void init(float physicsScale, float radius, glm::vec2 center, float density);
 
+	std::shared_ptr<PhysicsComponent> boulderPhysics;
+
 private:
     float time = 0;
-	float speed = 2.0f; 
-	float rotationSpeeed = 50.0f;
+	float speed = 5.0f; 
+	float rotationSpeeed = 40.0f;
 	float initialx = 0.0f;
 	float initialy = 2.12f;
 
 	/* Physics */
-	float radius = 130.0f;
+	float radius;
 	float maximumVelocity;
-	std::shared_ptr<PhysicsComponent> boulderPhysics;
+	
 
 	
 	//void stopMovement();

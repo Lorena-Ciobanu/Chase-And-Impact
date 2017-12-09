@@ -28,7 +28,7 @@ PhysicsComponent::~PhysicsComponent() {
     }
 }
 
-void PhysicsComponent::addImpulse(glm::vec2 force) {
+void PhysicsComponent::addImpulse(glm::vec2 force) { 
     b2Vec2 iForceV{force.x,force.y};
     body->ApplyLinearImpulse(iForceV, body->GetWorldCenter(), true);
 }
@@ -43,6 +43,18 @@ glm::vec2 PhysicsComponent::getLinearVelocity() {
     return {v.x,v.y};
 }
 
+void PhysicsComponent::setAngularVelocity(float impulse)
+{
+	//body->ApplyAngularImpulse(impulse, true);
+	body->SetAngularVelocity(impulse);
+}
+
+float PhysicsComponent::getAngularVelocity()
+{
+	return body->GetAngularVelocity();
+}
+
+
 void PhysicsComponent::setLinearVelocity(glm::vec2 velocity) {
     b2Vec2 v{velocity.x, velocity.y};
     if (velocity != glm::vec2(0,0)){
@@ -50,6 +62,7 @@ void PhysicsComponent::setLinearVelocity(glm::vec2 velocity) {
     }
     body->SetLinearVelocity(v);
 }
+
 
 void PhysicsComponent::initCircle(b2BodyType type, float radius, glm::vec2 center, float density) {
     assert(body == nullptr);
@@ -90,10 +103,11 @@ void PhysicsComponent::initBox(b2BodyType type, glm::vec2 size, glm::vec2 center
     fxD.density = density;
     fixture = body->CreateFixture(&fxD);
 
-
+	
 
     ChaseAndImpactGame::instance->registerPhysicsComponent(this);
 }
+
 
 bool PhysicsComponent::isSensor() {
     return fixture->IsSensor();
@@ -105,6 +119,11 @@ void PhysicsComponent::setSensor(bool enabled) {
 
 void PhysicsComponent::fixRotation() {
     fixture->GetBody()->SetFixedRotation(true);
+}
+
+float PhysicsComponent::getMass()
+{
+	return body->GetMass();
 }
 
 void PhysicsComponent::moveTo(glm::vec2 pos) {

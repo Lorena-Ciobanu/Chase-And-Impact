@@ -76,7 +76,7 @@ void ChaseAndImpactGame::initLevel() {
 	camera = camObj->addComponent<SideScrollingCamera>();
 	camera->setFollowObject(boulderObj, { 245 ,windowSize.y*0.5f });
 
-	initPlayerObject("Player 1", 19, glm::vec2{ 2.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
+	initPlayerObject("Player 1", 19, glm::vec2{ 9.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
 	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
 
 }

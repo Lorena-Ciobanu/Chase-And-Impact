@@ -14,29 +14,31 @@ BoulderMovementComponent::BoulderMovementComponent(GameObject *gameObject) : Com
 
 void BoulderMovementComponent::init(float physicsScale, float radius, glm::vec2 center, float density)
 {
-	radius /= physicsScale;
-	boulderPhysics->initCircle(b2BodyType::b2_kinematicBody, radius, glm::vec2(initialx, initialy), 100.0f);
+	this->radius = radius / physicsScale;
+	boulderPhysics->initCircle(b2BodyType::b2_kinematicBody, this->radius, glm::vec2(initialx, initialy), 10.0f);
 	boulderPhysics->setSensor(true); 
-
+	
 }
 
 
 void BoulderMovementComponent::update(float deltaTime) {
-	glm::vec2 vel = boulderPhysics->getLinearVelocity();
-	b2Vec2 temp = b2Vec2(vel.x, vel.y);
-	
-	if (CanMove == true)
-	{
-		vel.x = b2Min(temp.x + 0.01f, speed);					//gradually increase the velocity
-		
-	}
-	else 
-	{
-		vel.x *= 0.98;
-	}
 
-	boulderPhysics->setLinearVelocity(vel);
-	// Need to add rotation
+	if(CanMove){
+
+		/* Angular Velocity */
+		float angularVel = boulderPhysics->getAngularVelocity();
+		angularVel = b2Max(angularVel - 0.5f, -rotationSpeeed);
+		boulderPhysics->setAngularVelocity(angularVel);
+
+		/* Linear Velocity */
+		auto vel = boulderPhysics->getLinearVelocity();
+		vel.x = b2Min(vel.x + 0.01f, speed);
+		boulderPhysics->setLinearVelocity(vel);
+	}
+	else {
+		boulderPhysics->setAngularVelocity(0);
+		boulderPhysics->setLinearVelocity(glm::vec2(0,0));
+	}
 }
 
 /*

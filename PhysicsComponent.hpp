@@ -23,11 +23,17 @@ public:
 
     glm::vec2 getLinearVelocity();
 
+	void setAngularVelocity(float);
+
+	float getAngularVelocity();
+
     bool isSensor();
 
     void setSensor(bool enabled);
 
     void fixRotation();
+
+	float getMass();
 
     // Move to position in physics scale
     // Internally implemented by setting linearVelocity to delta value
