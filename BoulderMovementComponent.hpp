@@ -12,6 +12,8 @@ class BoulderMovementComponent : public Component {
 public:
     explicit BoulderMovementComponent(GameObject *gameObject);
 
+	void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp);
+
     void update(float deltaTime) override;
 
 	bool CanMove = true;

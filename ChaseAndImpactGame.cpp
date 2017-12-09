@@ -292,3 +292,9 @@ void ChaseAndImpactGame::handleContact(b2Contact *contact, bool begin) {
 	}
 }
 
+void ChaseAndImpactGame::endGame(std::string loser) {
+
+	// TODO Create win screen, slow down gameplay (maybe), activate spacebar to restart the game
+
+}
+

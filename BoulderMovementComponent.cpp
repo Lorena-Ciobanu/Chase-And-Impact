@@ -3,10 +3,12 @@
 //
 
 #include <iostream>
+#include "ChaseAndImpactGame.hpp"
 #include "BoulderMovementComponent.hpp"
 #include "GameObject.hpp"
 #include "Level.hpp"
 #include "PhysicsComponent.hpp"
+#include "SpriteComponent.hpp"
 
 BoulderMovementComponent::BoulderMovementComponent(GameObject *gameObject) : Component(gameObject) {
 	boulderPhysics = gameObject->addComponent<PhysicsComponent>();
@@ -52,3 +54,17 @@ void BoulderMovementComponent::update(float deltaTime) {
 } 
 */
 
+void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp) {
+
+	auto compName = comp->getGameObject()->name;
+
+	if (compName == "Player 1" || compName == "Player 2")
+	{
+		auto playerSpriteRenderer = comp->getGameObject()->getComponent<SpriteComponent>();
+		comp->getGameObject()->removeComponent(playerSpriteRenderer);
+		// TODO Maybe add a particle effect
+
+		ChaseAndImpactGame::endGame(compName); 
+	}
+
+}

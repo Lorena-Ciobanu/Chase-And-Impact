@@ -30,6 +30,8 @@ public:
     static ChaseAndImpactGame* instance;
 
     static constexpr float32 timeStep = 1.0f / 60.0f;
+
+	static void ChaseAndImpactGame::endGame(std::string loser);
 	
 private:
     sre::SDLRenderer r;
