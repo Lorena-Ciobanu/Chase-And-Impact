@@ -27,12 +27,12 @@ void BoulderMovementComponent::update(float deltaTime) {
 
 		/* Angular Velocity */
 		float angularVel = boulderPhysics->getAngularVelocity();
-		angularVel = b2Max(angularVel - 0.5f, -rotationSpeeed);
+		angularVel = b2Max(angularVel - 0.5f, -maxRotationSpeeed);
 		boulderPhysics->setAngularVelocity(angularVel);
 
 		/* Linear Velocity */
 		auto vel = boulderPhysics->getLinearVelocity();
-		vel.x = b2Min(vel.x + 0.01f, speed);
+		vel.x = b2Min(vel.x + 0.008f, maxSpeed);
 		boulderPhysics->setLinearVelocity(vel);
 	}
 	else {

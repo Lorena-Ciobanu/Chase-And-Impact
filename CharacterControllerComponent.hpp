@@ -53,7 +53,7 @@ private:
     float radius;
 	float animationSpeed;
 	float animationDeltaTime = 0;
-	float maximumVelocity = 2.0f;
+	float maximumVelocity = 2.7f;
 	float jumpForce = 0.15f;
     bool left = false;
     bool right = false;

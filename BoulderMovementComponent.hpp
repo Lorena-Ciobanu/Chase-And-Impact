@@ -21,8 +21,8 @@ public:
 
 private:
     float time = 0;
-	float speed = 5.0f; 
-	float rotationSpeeed = 40.0f;
+	float maxSpeed = 4.0f; 
+	float maxRotationSpeeed = 40.0f;
 	float initialx = 0.0f;
 	float initialy = 2.12f;
 
