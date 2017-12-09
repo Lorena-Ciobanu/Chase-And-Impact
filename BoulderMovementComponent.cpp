@@ -22,6 +22,16 @@ void BoulderMovementComponent::init(float physicsScale, float radius, glm::vec2 
 	
 }
 
+void BoulderMovementComponent::setGameInstance(ChaseAndImpactGame * instance)
+{
+	game = instance;
+}
+
+BoulderMovementComponent::~BoulderMovementComponent()
+{
+	game = nullptr;
+}
+
 
 void BoulderMovementComponent::update(float deltaTime) {
 
@@ -36,6 +46,15 @@ void BoulderMovementComponent::update(float deltaTime) {
 		auto vel = boulderPhysics->getLinearVelocity();
 		vel.x = b2Min(vel.x + 0.008f, maxSpeed);
 		boulderPhysics->setLinearVelocity(vel);
+
+
+		/* Check whether or not to destroy previous level sections*/
+		auto currentBoulderPos = gameObject->getPosition();
+		auto currentUpdatePos = game->getCurrentUpdatePosition();
+
+		if (currentBoulderPos.x >= currentUpdatePos + Level::endLevelOffset) {
+			game->updateLevel();
+		}
 	}
 	else {
 		boulderPhysics->setAngularVelocity(0);
@@ -53,9 +72,9 @@ void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp) {
 		comp->getGameObject()->removeComponent(playerSpriteRenderer);
 		
 		// TODO Maybe add a particle effect
-		CanMove = false;
+	//	CanMove = false;
 
-		ChaseAndImpactGame::endGame(compName); 
+		game->endGame(compName); 
 	}
 
 }

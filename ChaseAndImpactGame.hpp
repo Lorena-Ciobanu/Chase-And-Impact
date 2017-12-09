@@ -1,6 +1,7 @@
 #include "sre/SDLRenderer.hpp"
 #include "sre/SpriteAtlas.hpp"
 #include <vector>
+#include <unordered_map>
 #include "Box2D/Dynamics/b2World.h"
 #include "GameObject.hpp"
 #include "SideScrollingCamera.hpp"
@@ -21,6 +22,8 @@ public:
     ChaseAndImpactGame();
 
     std::shared_ptr<GameObject> createGameObject();
+	void destroyGameObject(std::shared_ptr<GameObject> ptr);
+
     static const glm::vec2 windowSize;
 
     void BeginContact(b2Contact *contact) override;
@@ -31,7 +34,11 @@ public:
 
     static constexpr float32 timeStep = 1.0f / 60.0f;
 
-	static void ChaseAndImpactGame::endGame(std::string loser);
+	void endGame(std::string loser);
+
+	float getCurrentUpdatePosition();
+
+	void updateLevel();
 	
 private:
     sre::SDLRenderer r;
@@ -56,6 +63,9 @@ private:
 	std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
 	std::vector<std::shared_ptr<sre::Texture>> textures;
 	std::vector<std::shared_ptr<GameObject>> sceneObjects;
+	
+//	std::unordered_map<GameObject*, std::shared_ptr<GameObject>> sceneObjects;
+	
 	std::shared_ptr<Level> level;
 	glm::vec4 backgroundColor;
 	b2World * world = nullptr;
@@ -70,7 +80,6 @@ private:
 	bool doDebugDraw = true;
 
     friend class PhysicsComponent;
-    friend class Level;
     friend class CharacterControllerComponent;
     friend class PlatformComponent;
 };

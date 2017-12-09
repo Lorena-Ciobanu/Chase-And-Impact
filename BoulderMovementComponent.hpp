@@ -21,6 +21,10 @@ public:
 
 	std::shared_ptr<PhysicsComponent> boulderPhysics;
 
+	void setGameInstance(ChaseAndImpactGame* instance);
+
+	~BoulderMovementComponent();
+
 private:
     float time = 0;
 	float maxSpeed = 4.0f; 
@@ -33,6 +37,7 @@ private:
 	float maximumVelocity;
 	
 
+	ChaseAndImpactGame* game;
 	
 	//void stopMovement();
 

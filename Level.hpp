@@ -3,10 +3,12 @@
 #include <memory>
 #include <vector>
 #include <sre/SpriteAtlas.hpp>
+#include <queue>
 
 class ChaseAndImpactGame;
 class GameObject;
 class PlatformComponent;
+class LevelSection;
 
 enum class TileCollider {
     Block,
@@ -17,16 +19,32 @@ enum class TileCollider {
 
 class Level {
 public:
-    static std::shared_ptr<Level> createDefaultLevel(ChaseAndImpactGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas);
-
-    void generateLevel();
-    std::shared_ptr<PlatformComponent> addPlatform(int x, int y, int startSpriteId, int length, bool kinematic);
-    std::shared_ptr<PlatformComponent> addWall(int x, int y, int startSpriteId, int height);
+	Level(ChaseAndImpactGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas);
 
     static constexpr float tileSize = 21;
+
+	static constexpr float endLevelOffset = 0;		// how much the boulder has to roll after the section for it to be destoyed
+
+	void generateLevel();
+
+	void updateLevel();
+
+	float getCurrentUpdatePosition();
+
+	~Level();
+
 private:
-    Level() = default;
+	int const initialNrOfSections = 3;
+
+	float currentSectionIndex = 0;
+
+	void addSection();
+
+	void removeSection();
+
     ChaseAndImpactGame* game;
     std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
+
+	std::queue<std::shared_ptr<LevelSection>> levelSections;
 };
 

@@ -16,7 +16,7 @@ PlatformComponent::PlatformComponent(GameObject *gameObject) : Component(gameObj
 }
 
 void PlatformComponent::init(std::shared_ptr<sre::SpriteAtlas> spriteAtlas, int x, int y, int startSpriteId, int width, bool kinematic) {
-	// TODO This tightly coupled function is what you have to modify in order to change over to the new sprites. 
+
     this->kinematic = kinematic;
     this->width = width;
     auto game = ChaseAndImpactGame::instance;

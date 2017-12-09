@@ -12,11 +12,12 @@
 #include "BoulderMovementComponent.hpp"
 #include "ParticleSystemComponent.hpp"
 #include "NameplateComponent.h"
+#include<unordered_map>
 
 using namespace std;
 using namespace sre;
 
-const glm::vec2 ChaseAndImpactGame::windowSize(800, 600);
+const glm::vec2 ChaseAndImpactGame::windowSize(900, 500);
 
 ChaseAndImpactGame* ChaseAndImpactGame::instance = nullptr;
 
@@ -34,7 +35,7 @@ ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 
 	spriteAtlas = SpriteAtlas::create("platformer-art-deluxe.json", "platformer-art-deluxe.png");
 
-	level = Level::createDefaultLevel(this, spriteAtlas);
+	level = std::shared_ptr<Level>(new Level(this, spriteAtlas));
 
 	initLevel();
 
@@ -69,6 +70,7 @@ void ChaseAndImpactGame::initLevel() {
 	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
 	boulderMovement->init(physicsScale, 195.0f, glm::vec2(0.0f, 7.1f),1.0f);
 	boulderMovement->CanMove = true;
+	boulderMovement->setGameInstance(this);
 
 	auto camObj = createGameObject();
 	camObj->name = "Camera";
@@ -155,6 +157,7 @@ void ChaseAndImpactGame::render() {
 	auto pos = camera->getGameObject()->getPosition();
 
 	auto spriteBatchBuilder = SpriteBatch::create();
+
 	for (auto & go : sceneObjects) {
 		go->renderSprite(spriteBatchBuilder);
 		auto particle = go->getComponent<ParticleSystemComponent>();
@@ -210,10 +213,15 @@ void ChaseAndImpactGame::onKey(SDL_Event &event) {
 }
 
 std::shared_ptr<GameObject> ChaseAndImpactGame::createGameObject() {
-	auto obj = shared_ptr<GameObject>(new GameObject());
+	shared_ptr<GameObject> obj = shared_ptr<GameObject>(new GameObject());
 	sceneObjects.push_back(obj);
 	return obj;
 }
+
+void ChaseAndImpactGame::destroyGameObject(std::shared_ptr<GameObject> ptr)
+{
+}
+
 
 void ChaseAndImpactGame::updatePhysics() {
 
@@ -296,5 +304,15 @@ void ChaseAndImpactGame::endGame(std::string loser) {
 
 	// TODO Create win screen, slow down gameplay (maybe), activate spacebar to restart the game
 
+}
+
+float ChaseAndImpactGame::getCurrentUpdatePosition()
+{
+	return level->getCurrentUpdatePosition();
+}
+
+void ChaseAndImpactGame::updateLevel()
+{
+	level->updateLevel();
 }
 

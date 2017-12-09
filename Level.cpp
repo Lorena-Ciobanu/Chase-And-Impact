@@ -1,19 +1,52 @@
-//
-// Created by Morten Nobel-Jørgensen on 11/3/17.
-//
-
 #include "Level.hpp"
 #include "ChaseAndImpactGame.hpp"
-#include "SpriteComponent.hpp"
-#include "PhysicsComponent.hpp"
-#include "PlatformComponent.hpp"
-#include "MovingPlatformComponent.hpp"
+#include "LevelSection.h"
+
+Level::Level(ChaseAndImpactGame * game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas)
+{
+	this->game = game;
+	this->spriteAtlas = spriteAtlas;
+}
+
+void Level::generateLevel()
+{
+	for (int i = 0; i < initialNrOfSections; i++) {
+		addSection();
+	}
+}
+
+void Level::updateLevel()
+{
+	removeSection();
+	addSection();
+}
+
+float Level::getCurrentUpdatePosition()
+{
+	return levelSections.front()->getEndBound();
+}
+
+void Level::addSection()
+{
+	levelSections.emplace(std::make_shared<LevelSection>(game, spriteAtlas, currentSectionIndex++));
+}
+
+void Level::removeSection()
+{
+	levelSections.pop();
+}
+
+Level::~Level()
+{
+	while (!levelSections.empty()) {
+		levelSections.pop();
+	}
+}
 
 
-std::shared_ptr<Level> Level::createDefaultLevel(ChaseAndImpactGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas) {
+/*std::shared_ptr<Level> Level::createDefaultLevel(ChaseAndImpactGame* game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas) {
     std::shared_ptr<Level> res = std::shared_ptr<Level>(new Level());
 
-    // todo initialize
     res->game = game;
     res->spriteAtlas = spriteAtlas;
 
@@ -21,33 +54,16 @@ std::shared_ptr<Level> Level::createDefaultLevel(ChaseAndImpactGame* game, std::
 }
 
 void Level::generateLevel() {
-	// TODO Here is where you have to change the "startSpriteId" parameter in order to change over to the new sprites. 
     // start wall
-	addWall(-7, 1, 2, 20);
+	addWall(boundryLeftX, 1, 2, 20);
 
-    // floor
-    addPlatform(-7, 0, 2, 100, false);
-    // ceil
-    addPlatform(-7, 20, 2, 100, false);
-
-  /*  auto movingPlatform = addPlatform(10, 3, 2, 5, true);
-    auto movingPlatformComponent = movingPlatform->getGameObject()->addComponent<MovingPlatformComponent>();
-    movingPlatformComponent->setMovementStart({10,3});
-    movingPlatformComponent->setMovementEnd({10,5}); */
-
-    // add some more platforms
-    addPlatform(15, 7, 2, 5, true);
-    addPlatform(20, 3, 2, 5, true);
-    addPlatform(25, 7, 2, 5, true);
-    addPlatform(30, 10, 2, 5, true);
-    addPlatform(35, 7, 2, 5, true);
-    addPlatform(40, 3, 2, 5, true);
+	generateSection(boundryLeftX, boundryRightX);
 
     // end wall
     addWall(100, 1, 2, 20);
-}
+}*/
 
-std::shared_ptr<PlatformComponent> Level::addPlatform(int x, int y, int startSpriteId, int length, bool kinematic) {
+/*std::shared_ptr<PlatformComponent> Level::addPlatform(int x, int y, int startSpriteId, int length, bool kinematic) {
     auto gameObject = game->createGameObject();
     gameObject->name = "Platform";
     auto res = gameObject->addComponent<PlatformComponent>();
@@ -62,4 +78,29 @@ std::shared_ptr<PlatformComponent> Level::addWall(int x, int y, int startSpriteI
     auto res = gameObject->addComponent<PlatformComponent>();
     res->initWall(spriteAtlas, x,y,startSpriteId, length);
     return res;
+} */
+
+/*void Level::generateSection(int startX, int endX)
+{
+	// floor
+	addPlatform(startX, boundryBottomY, 2, sectionLength, false);
+
+	// ceil
+	addPlatform(startX, boundryTopY, 2, sectionLength, false);
+
+	/*  auto movingPlatform = addPlatform(10, 3, 2, 5, true);
+	auto movingPlatformComponent = movingPlatform->getGameObject()->addComponent<MovingPlatformComponent>();
+	movingPlatformComponent->setMovementStart({10,3});
+	movingPlatformComponent->setMovementEnd({10,5}); 
+
+	// add some more platforms
+	addPlatform(15, 7, 2, 5, true);
+	addPlatform(20, 3, 2, 5, true);
+	addPlatform(25, 7, 2, 5, true);
+	addPlatform(30, 10, 2, 5, true);
+	addPlatform(35, 7, 2, 5, true);
+	addPlatform(40, 3, 2, 5, true);
 }
+*/
+
+
