@@ -26,30 +26,29 @@ void ParticleSystemComponent::init(int particleCount, std::shared_ptr<sre::Textu
 		p.angularVelocity = 0;
 	};
 
-    updateAppearance = [](Particle& p) {
-    };
+	colorInterpolation = [](const Particle& p) {
+		return glm::vec4(1, 1, 1, 1);
+	};
 
-    updatePhysics = [&](Particle& p, float deltaTime){
-        p.velocity += deltaTime * gravity;
-        p.position += p.velocity * deltaTime;
-        p.rotation += p.angularVelocity * deltaTime;
-    };
+	sizeInterpolation = [](const Particle& p) {
+		return 50;
+	};
 
-    // preallocate arrays for mesh data
-    for (int i=0;i<particleCount;i++){
-        positions[i] = glm::vec3(i*0.1f,i*0.1f,i*0.1f);
-        colors[i] = glm::vec4(1,1,1,1);
-        sizes[i] = 100;
-        particles[i].setIndex(i);
-    }
+	// preallocate arrays for mesh data
+	for (int i = 0; i < particleCount; i++) {
+		positions[i] = glm::vec3(i*0.1f, i*0.1f, i*0.1f);
+		colors[i] = glm::vec4(1, 1, 1, 1);
+		sizes[i] = 100;
+		particles[i].index = i;
+	}
 
-    mesh = sre::Mesh::create ()
-            .withPositions(positions)
-            .withColors(colors)
-            .withParticleSizes(sizes)
-            .withUVs(uvs)
-            .withMeshTopology(sre::MeshTopology::Points)
-            .build();
+	mesh = sre::Mesh::create()
+		.withPositions(positions)
+		.withColors(colors)
+		.withParticleSizes(sizes)
+		.withUVs(uvs)
+		.withMeshTopology(sre::MeshTopology::Points)
+		.build();
 }
 
 void ParticleSystemComponent::update(float deltaTime) {
@@ -65,35 +64,36 @@ void ParticleSystemComponent::update(float deltaTime) {
 	}
 
 	if (running) {
-        time += deltaTime;
-        activeParticles = 0;
-        for (auto &p : particles) {
-            updatePhysics(p, deltaTime);
-            p.alive = p.timeOfBirth + lifeSpan > time;
-            if (p.alive){
-                activeParticles++;
-                p.normalizedAge = (time - p.timeOfBirth) / lifeSpan;
-            } else {
-                p.size = 0;
-            }
-        }
-    }
+		time += deltaTime;
+		activeParticles = 0;
+		for (auto &p : particles) {
+			p.velocity += deltaTime * gravity;
+			p.position += p.velocity * deltaTime;
+			p.rotation += p.angularVelocity * deltaTime;
+			p.alive = p.timeOfBirth + lifeSpan > time;
+			if (p.alive)
+				activeParticles++;
+			p.normalizedAge = (time - p.timeOfBirth) / lifeSpan;
+		}
+	}
 }
 
 void ParticleSystemComponent::draw(sre::RenderPass& pr, glm::mat4 transform) {
 	if (!visible) return;
-    for (auto & p : particles){
-        if (p.alive){
-            updateAppearance(p);
-        }
-    }
-    mesh->update()
-            .withPositions(positions)
-            .withColors(colors)
-            .withParticleSizes(sizes)
-            .withUVs(uvs)
-            .build();
-    pr.draw(mesh, transform, material);
+	for (int i = 0; i < particles.size(); i++) {
+		auto &p = particles[i];
+		sizes[i] = p.alive ? sizeInterpolation(p) : 0;
+		positions[i] = p.position;
+		colors[i] = colorInterpolation(p);
+		uvs[i].w = p.rotation;
+	}
+	mesh->update()
+		.withPositions(positions)
+		.withColors(colors)
+		.withParticleSizes(sizes)
+		.withUVs(uvs)
+		.build();
+	pr.draw(mesh, transform, material);
 }
 
 int ParticleSystemComponent::getActiveParticles() {
@@ -101,11 +101,11 @@ int ParticleSystemComponent::getActiveParticles() {
 }
 
 void ParticleSystemComponent::emit() {
-    auto & p = particles[particleIndex];
-    p.alive = true;
-    p.timeOfBirth = time;
-    p.normalizedAge = 0;
-    emitter(p);
-    particleIndex = static_cast<int>((particleIndex + 1) % particles.size());
+	auto & p = particles[particleIndex];
+	p.alive = true;
+	p.timeOfBirth = time;
+	p.normalizedAge = 0;
+	emitter(p);
+	particleIndex = (particleIndex + 1) % particles.size();
 }
 
