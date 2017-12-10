@@ -106,6 +106,12 @@ glm::vec2 PlatformComponent::getPosition() {
     return pos;
 }
 
+const std::vector<std::shared_ptr<GameObject>>& PlatformComponent::getTiles()
+{
+	return tiles;
+}
+
+
 void PlatformComponent::update(float deltaTime) {
     if (kinematic){
         glm::vec2 physPos = pos;

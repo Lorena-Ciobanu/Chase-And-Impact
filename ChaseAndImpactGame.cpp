@@ -12,6 +12,7 @@
 #include "BoulderMovementComponent.hpp"
 #include "ParticleSystemComponent.hpp"
 #include "NameplateComponent.h"
+#include "PlatformComponent.hpp"
 #include<unordered_map>
 
 using namespace std;
@@ -132,14 +133,18 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 }
 
 void ChaseAndImpactGame::update(float time) {
+
 	updatePhysics();
 	if (time > 0.03) // if framerate approx 30 fps then run two physics steps
 	{
 		updatePhysics();
 	}
-	for (int i = 0; i < sceneObjects.size(); i++) {
-		sceneObjects[i]->update(time);
+
+	for (auto & gameObj : sceneObjects) {
+		gameObj.second->update(time);
 	}
+
+	destroyGameObjects();		//Only destroy objects at the end of frame, once all physics have been computed
 }
 
 void ChaseAndImpactGame::render() {
@@ -158,7 +163,8 @@ void ChaseAndImpactGame::render() {
 
 	auto spriteBatchBuilder = SpriteBatch::create();
 
-	for (auto & go : sceneObjects) {
+	for (auto & pair : sceneObjects) {
+		auto go = pair.second;
 		go->renderSprite(spriteBatchBuilder);
 		auto particle = go->getComponent<ParticleSystemComponent>();
 		if (particle)
@@ -184,7 +190,8 @@ void ChaseAndImpactGame::render() {
 }
 
 void ChaseAndImpactGame::onKey(SDL_Event &event) {
-	for (auto & gameObject : sceneObjects) {
+	for (auto & pair : sceneObjects) {
+		auto gameObject = pair.second;
 		for (auto & c : gameObject->getComponents()) {
 			bool consumed = c->onKey(event);
 			if (consumed) {
@@ -214,12 +221,13 @@ void ChaseAndImpactGame::onKey(SDL_Event &event) {
 
 std::shared_ptr<GameObject> ChaseAndImpactGame::createGameObject() {
 	shared_ptr<GameObject> obj = shared_ptr<GameObject>(new GameObject());
-	sceneObjects.push_back(obj);
+	sceneObjects.emplace(obj.get(), obj);
 	return obj;
 }
 
-void ChaseAndImpactGame::destroyGameObject(std::shared_ptr<GameObject> ptr)
+void ChaseAndImpactGame::destroyGameObject(GameObject* ptr)
 {
+	markedForDestroy.push_back(ptr);
 }
 
 
@@ -237,6 +245,37 @@ void ChaseAndImpactGame::updatePhysics() {
 		auto gameObject = physicsComponent->getGameObject();
 		gameObject->setPosition(glm::vec2(position.x*physicsScale, position.y*physicsScale));
 		gameObject->setRotation(angle);
+	}
+}
+
+void ChaseAndImpactGame::destroyGameObjects()
+{
+	if (markedForDestroy.size() > 0) {
+		for (auto it = markedForDestroy.begin(); it != markedForDestroy.end(); it++) {
+			auto gameObjectPair = sceneObjects.find(*it);
+
+			if (gameObjectPair != sceneObjects.end()) {
+
+				/*	Since out platforms are created out of a bigger number of tiles,
+					each with their own gameObjectwe need to remove those as well 
+				*/
+
+				auto platformComponent = gameObjectPair->second->getComponent<PlatformComponent>();
+				auto tiles = platformComponent->getTiles();
+
+				for (auto & tilesIt = tiles.begin(); tilesIt != tiles.end(); tilesIt++) {
+					auto ptr = tilesIt->get();
+					if (sceneObjects.find(ptr) != sceneObjects.end()) {
+						sceneObjects.erase(ptr);
+					}
+				}
+		
+
+				sceneObjects.erase(gameObjectPair);
+			}
+		}
+
+		markedForDestroy.clear();
 	}
 }
 
@@ -278,26 +317,29 @@ void ChaseAndImpactGame::registerPhysicsComponent(PhysicsComponent *r) {
 void ChaseAndImpactGame::handleContact(b2Contact *contact, bool begin) {
 	auto fixA = contact->GetFixtureA();
 	auto fixB = contact->GetFixtureB();
-	PhysicsComponent* physA = physicsComponentLookup[fixA];
-	PhysicsComponent* physB = physicsComponentLookup[fixB];
-	auto & aComponents = physA->getGameObject()->getComponents();
-	auto & bComponents = physB->getGameObject()->getComponents();
-	for (auto & c : aComponents) {
-		if (begin) {
-			c->onCollisionStart(physB);
+
+	auto physA = physicsComponentLookup.find(fixA);
+	auto physB = physicsComponentLookup.find(fixB);
+	if (physA != physicsComponentLookup.end() && physB != physicsComponentLookup.end()) {
+		auto & aComponents = physA->second->getGameObject()->getComponents();
+		auto & bComponents = physB->second->getGameObject()->getComponents();
+		for (auto & c : aComponents) {
+			if (begin) {
+				c->onCollisionStart(physB->second);
+			}
+			else {
+				c->onCollisionEnd(physB->second);
+			}
 		}
-		else {
-			c->onCollisionEnd(physB);
+		for (auto & c : bComponents) {
+			if (begin) {
+				c->onCollisionStart(physA->second);
+			}
+			else {
+				c->onCollisionEnd(physA->second);
+			}
 		}
-	}
-	for (auto & c : bComponents) {
-		if (begin) {
-			c->onCollisionStart(physA);
-		}
-		else {
-			c->onCollisionEnd(physA);
-		}
-	}
+	}	
 }
 
 void ChaseAndImpactGame::endGame(std::string loser) {

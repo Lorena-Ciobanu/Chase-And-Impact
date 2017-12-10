@@ -22,7 +22,7 @@ public:
     ChaseAndImpactGame();
 
     std::shared_ptr<GameObject> createGameObject();
-	void destroyGameObject(std::shared_ptr<GameObject> ptr);
+	void destroyGameObject(GameObject* ptr);
 
     static const glm::vec2 windowSize;
 
@@ -59,13 +59,16 @@ private:
 
 	void updatePhysics();
 
+	void destroyGameObjects();
+
 	std::shared_ptr<SideScrollingCamera> camera;
 	std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
 	std::vector<std::shared_ptr<sre::Texture>> textures;
-	std::vector<std::shared_ptr<GameObject>> sceneObjects;
 	
-//	std::unordered_map<GameObject*, std::shared_ptr<GameObject>> sceneObjects;
+	std::unordered_map<GameObject*, std::shared_ptr<GameObject>> sceneObjects;
+	std::vector<GameObject*> markedForDestroy;
 	
+
 	std::shared_ptr<Level> level;
 	glm::vec4 backgroundColor;
 	b2World * world = nullptr;

@@ -18,7 +18,7 @@ void Component::update(float deltaTime) {
 }
 
 GameObject *Component::getGameObject() {
-    return gameObject;
+	return gameObject;
 }
 
 bool Component::onKey(SDL_Event &event) {

@@ -23,7 +23,7 @@ public:
 
     static constexpr float tileSize = 21;
 
-	static constexpr float endLevelOffset = 0;		// how much the boulder has to roll after the section for it to be destoyed
+	static constexpr float endLevelOffset = 150;		// how much the boulder has to roll after the section for it to be destoyed [so that it's not visible]
 
 	void generateLevel();
 

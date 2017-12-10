@@ -18,6 +18,9 @@ public:
     void update(float deltaTime) override;
 
     glm::vec2 getPosition();
+
+	const std::vector<std::shared_ptr<GameObject>>& getTiles();
+
 private:
     std::vector<std::shared_ptr<GameObject>> tiles;
     std::shared_ptr<PhysicsComponent> physics;

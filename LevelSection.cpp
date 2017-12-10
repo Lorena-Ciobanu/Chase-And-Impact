@@ -31,7 +31,7 @@ void LevelSection::generateLevelSection()
 	generateFloor();
 
 	// for (some random number){
-	// generatePlatforms()
+	// generateObstacles()
 }
 
 
@@ -78,7 +78,7 @@ std::shared_ptr<GameObject> LevelSection::createWall(std::string name, int x, in
 
 LevelSection::~LevelSection()
 {
-	if (!platforms.empty()) {
-		platforms.clear();
+	for (int i = 0; i < platforms.size(); i++) {
+		game->destroyGameObject(platforms[i].get());
 	}
 }
