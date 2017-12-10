@@ -31,17 +31,20 @@ void NameplateComponent::update(float deltaTime)
 
 void NameplateComponent::render()
 {
-	float x = gameObject->getPosition().x;
-	float y = gameObject->getPosition().y;
+	if (ShowPlate == true)
+	{
+		float x = gameObject->getPosition().x;
+		float y = gameObject->getPosition().y;
 
-	glm::vec4 ws_point = glm::vec4(x, y, 0.0f, 1.0f);
-	glm::vec4 cspoint = cameraRef->getProjectionTransform(glm::uvec2(windowWidth, windowHeight)) * cameraRef->getViewTransform() * ws_point;
-	glm::vec4 windowsCoord = (glm::vec4((cspoint.x * 0.5f) + 0.5f, (cspoint.y * 0.5f) + 0.5f, 0.0f, 1.0f));
-	float nameplateX = windowsCoord.x * windowWidth - (nameplateSize.x * 4);
-	float nameplateY = windowHeight - (windowsCoord.y * windowHeight) - nameplateSize.y - offsetY;
-	ImGui::SetNextWindowPos(ImVec2(nameplateX, nameplateY));
-	bool open = true;
-	ImGui::Begin(name, &open, nameplateSize, 0.5f, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
-	ImGui::TextColored(nameplateColor, name);
-	ImGui::End();
+		glm::vec4 ws_point = glm::vec4(x, y, 0.0f, 1.0f);
+		glm::vec4 cspoint = cameraRef->getProjectionTransform(glm::uvec2(windowWidth, windowHeight)) * cameraRef->getViewTransform() * ws_point;
+		glm::vec4 windowsCoord = (glm::vec4((cspoint.x * 0.5f) + 0.5f, (cspoint.y * 0.5f) + 0.5f, 0.0f, 1.0f));
+		float nameplateX = windowsCoord.x * windowWidth - (nameplateSize.x * 4);
+		float nameplateY = windowHeight - (windowsCoord.y * windowHeight) - nameplateSize.y - offsetY;
+		ImGui::SetNextWindowPos(ImVec2(nameplateX, nameplateY));
+		bool open = true;
+		ImGui::Begin(name, &open, nameplateSize, 0.5f, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+		ImGui::TextColored(nameplateColor, name);
+		ImGui::End();
+	}	
 }

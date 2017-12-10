@@ -10,6 +10,7 @@ public:
 	void init(const char* nameplateString, float windowWidth, float windowHeight, float offsetY, ImVec4 color, SideScrollingCamera* camRef);
 	void update(float deltaTime);
 	void render();
+	bool ShowPlate = true;
 private:
 	const char* name;
 	float windowWidth;
