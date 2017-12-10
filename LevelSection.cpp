@@ -4,6 +4,8 @@
 #include "PhysicsComponent.hpp"
 #include "PlatformComponent.hpp"
 
+#include <algorithm>
+
 
 LevelSection::LevelSection(ChaseAndImpactGame * game, std::shared_ptr<sre::SpriteAtlas> spriteAtlas, float sectionIndex)
 {
@@ -13,16 +15,18 @@ LevelSection::LevelSection(ChaseAndImpactGame * game, std::shared_ptr<sre::Sprit
 	this->boundryLeft = sectionIndex * sectionLength + initialOffset;
 	this->boundryRight = boundryLeft + sectionLength + initialOffset;
 
+	float tileSize = Level::tileSize;
+	float offset = Level::tileSize / 2;
+	worldSpaceBoundryLeft = offset + boundryLeft*tileSize;
+	worldSpaceBoundyRight= offset + boundryRight*tileSize;
+
 	generateLevelSection();
 }
 
 float LevelSection::getEndBound()
 {
-	float tileSize = Level::tileSize;
-	float offset = tileSize / 2;
-	return offset + boundryRight*tileSize;
+	return worldSpaceBoundyRight;
 }
-
 
 
 void LevelSection::generateLevelSection()
@@ -30,8 +34,13 @@ void LevelSection::generateLevelSection()
 	generateCeiling();
 	generateFloor();
 
-	// for (some random number){
-	// generateObstacles()
+	if (generatePlaftforms) {
+		currentPlatformEndX = boundryLeft;
+		currentPlatformEndY = getRandomNumberInRange(minJumpDistanceY, maxWallLength);
+		createWall(currentPlatformEndX, boundryBottom + 1, currentPlatformEndY);
+	
+		generateObstacles();
+	}
 }
 
 
@@ -46,8 +55,42 @@ void LevelSection::generateCeiling()
 	platforms.push_back(createPlatform("Ceiling", boundryLeft, boundryTop, sectionLength));
 }
 
+void LevelSection::generatePlatform(int x, int y, int length)
+{
+	platforms.push_back(createPlatform("Platform", x, y, length));
+}
+
 void LevelSection::generateObstacles()
 {
+	
+	while (currentPlatformEndX < boundryRight) {
+		float length = getRandomNumberInRange(minPlatformLength, maxPlatformLenght);
+
+		currentPlatformEndX = currentPlatformEndX + getRandomNumberInRange(minJumpDistanceX, maxJumpDistanceX);
+		currentPlatformEndY = currentPlatformEndY + getRandomNumberInRange(minJumpDistanceY, maxJumpDistanceY);
+		
+		float isPlatfomAbove = getRandomNumberInRange(0, 1);
+		if (!isPlatfomAbove) {
+			currentPlatformEndY *= -1;
+		}
+
+
+		if (currentPlatformEndY > boundryTop) {
+			currentPlatformEndY = boundryTop - getRandomNumberInRange(minJumpDistanceX, maxJumpDistanceX);
+		}
+
+		if (currentPlatformEndY < boundryBottom) {
+			currentPlatformEndY = boundryBottom + getRandomNumberInRange(minJumpDistanceY, maxJumpDistanceY);
+		}
+
+		if (currentPlatformEndX + length >= boundryRight) {
+			break;
+		}
+		generatePlatform(currentPlatformEndX, currentPlatformEndY, length);
+
+		currentPlatformEndX += length;
+	}
+
 }
 
 
@@ -68,12 +111,17 @@ std::shared_ptr<GameObject> LevelSection::createPlatform(std::string name, int x
 }
 
 
-std::shared_ptr<GameObject> LevelSection::createWall(std::string name, int x, int y, int length)
+std::shared_ptr<GameObject> LevelSection::createWall(int x, int y, int length)
 {
-	auto gameObject = createObject(name);
+	auto gameObject = createObject("Wall");
 	auto platform = gameObject->addComponent<PlatformComponent>();
 	platform->initWall(spriteAtlas, x, y, spriteId, length);
 	return gameObject;
+}
+
+int LevelSection::getRandomNumberInRange(int low, int high)
+{
+	return low + (std::rand() % (high - low + 1));
 }
 
 LevelSection::~LevelSection()

@@ -1,5 +1,7 @@
 #include <sre/Profiler.hpp>
 #include <iostream>
+#include <ctime>
+#include <unordered_map>
 #include "glm/gtx/transform.hpp"
 #include "ChaseAndImpactGame.hpp"
 #include "GameObject.hpp"
@@ -13,12 +15,11 @@
 #include "ParticleSystemComponent.hpp"
 #include "NameplateComponent.h"
 #include "PlatformComponent.hpp"
-#include<unordered_map>
 
 using namespace std;
 using namespace sre;
 
-const glm::vec2 ChaseAndImpactGame::windowSize(900, 500);
+const glm::vec2 ChaseAndImpactGame::windowSize(900, 440);
 
 ChaseAndImpactGame* ChaseAndImpactGame::instance = nullptr;
 
@@ -26,6 +27,10 @@ ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 {
 	instance = this;
 	r.setWindowSize(windowSize);
+
+	time_t t;                   // random seed based on time
+	srand((unsigned)time(&t));
+
 	bool useVsync = true;
 	r.init(SDL_INIT_EVERYTHING, SDL_WINDOW_OPENGL, useVsync);
 
@@ -77,7 +82,7 @@ void ChaseAndImpactGame::initLevel() {
 	camObj->name = "Camera";
 	camObj->setPosition(windowSize*0.5f);
 	camera = camObj->addComponent<SideScrollingCamera>();
-	camera->setFollowObject(boulderObj, { 400 ,windowSize.y*0.5f });
+	camera->setFollowObject(boulderObj, { 450 ,windowSize.y*0.5f });
 
 	initPlayerObject("Player 1", 19, glm::vec2{ 9.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
 	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
