@@ -68,6 +68,8 @@ private:
 
 	void generatePlatform(int x, int y, int length);
 
+	void generateWall(int x, int y, int length);
+
 	void generateObstacles();
 
 
@@ -75,7 +77,7 @@ private:
 
 	std::shared_ptr<GameObject> createPlatform(std::string name, int x, int y, int length);
 
-	std::shared_ptr<GameObject> createWall(int x, int y, int length);
+	std::shared_ptr<GameObject> createWall(std::string name, int x, int y, int length);
 
 
 	/* Helper function to get a random number in range */

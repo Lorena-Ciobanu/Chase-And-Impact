@@ -37,7 +37,7 @@ void LevelSection::generateLevelSection()
 	if (generatePlaftforms) {
 		currentPlatformEndX = boundryLeft;
 		currentPlatformEndY = getRandomNumberInRange(minJumpDistanceY, maxWallLength);
-		createWall(currentPlatformEndX, boundryBottom + 1, currentPlatformEndY);
+		generateWall(currentPlatformEndX, boundryBottom + 1, currentPlatformEndY);
 	
 		generateObstacles();
 	}
@@ -58,6 +58,10 @@ void LevelSection::generateCeiling()
 void LevelSection::generatePlatform(int x, int y, int length)
 {
 	platforms.push_back(createPlatform("Platform", x, y, length));
+}
+
+void LevelSection::generateWall(int x, int y, int length) {
+	platforms.push_back(createWall("Wall", x, y, length));
 }
 
 void LevelSection::generateObstacles()
@@ -111,9 +115,9 @@ std::shared_ptr<GameObject> LevelSection::createPlatform(std::string name, int x
 }
 
 
-std::shared_ptr<GameObject> LevelSection::createWall(int x, int y, int length)
+std::shared_ptr<GameObject> LevelSection::createWall(std::string name, int x, int y, int length)
 {
-	auto gameObject = createObject("Wall");
+	auto gameObject = createObject(name);
 	auto platform = gameObject->addComponent<PlatformComponent>();
 	platform->initWall(spriteAtlas, x, y, spriteId, length);
 	return gameObject;
