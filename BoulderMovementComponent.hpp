@@ -23,11 +23,9 @@ public:
 
 	void setGameInstance(ChaseAndImpactGame* instance);
 
-	~BoulderMovementComponent();
-
 private:
     float time = 0;
-	float maxSpeed = 4.0f; 
+	float maxSpeed = 2.7f; 
 	float maxRotationSpeeed = 40.0f;
 	float initialx = 0.0f;
 	float initialy = 2.12f;

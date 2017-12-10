@@ -27,11 +27,6 @@ void BoulderMovementComponent::setGameInstance(ChaseAndImpactGame * instance)
 	game = instance;
 }
 
-BoulderMovementComponent::~BoulderMovementComponent()
-{
-	game = nullptr;
-}
-
 
 void BoulderMovementComponent::update(float deltaTime) {
 
@@ -44,7 +39,7 @@ void BoulderMovementComponent::update(float deltaTime) {
 
 		/* Linear Velocity */
 		auto vel = boulderPhysics->getLinearVelocity();
-		vel.x = b2Min(vel.x + 0.008f, maxSpeed);
+		vel.x = b2Min(vel.x + 0.009f, maxSpeed);
 		boulderPhysics->setLinearVelocity(vel);
 
 
@@ -70,9 +65,9 @@ void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp) {
 	{
 		auto playerSpriteRenderer = comp->getGameObject()->getComponent<SpriteComponent>();
 		comp->getGameObject()->removeComponent(playerSpriteRenderer);
-		
+
 		// TODO Maybe add a particle effect
-	//	CanMove = false;
+		CanMove = false;
 
 		game->endGame(compName); 
 	}

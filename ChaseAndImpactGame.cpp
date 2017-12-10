@@ -37,7 +37,7 @@ ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 	textures.push_back(Texture::getSphereTexture());
 	textures.push_back(Texture::getWhiteTexture());
 
-	backgroundColor = glm::vec4(0.6, 0.6, 1, 1);
+	backgroundColor = glm::vec4(0.119, 0.778, 1.000, 0.8);
 
 	spriteAtlas = SpriteAtlas::create("platformer-art-deluxe.json", "platformer-art-deluxe.png");
 
