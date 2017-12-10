@@ -9,25 +9,25 @@ ParticleSystemComponent::ParticleSystemComponent(GameObject *gameObject) : Compo
 {
 }
 
-void ParticleSystemComponent::init(int particleCount, std::shared_ptr<sre::Texture> texture)
+void ParticleSystemComponent::init(int particleCount, std::shared_ptr<sre::Texture> texture, glm::vec4 particleColor)
 {
 	particles.resize(particleCount);
 	material = sre::Shader::getStandardParticles()->createMaterial();
 	material->setTexture(texture);
 	positions.resize(particleCount, glm::vec3(0, 0, 0));
-	colors.resize(particleCount, glm::vec4(0, 0, 0, 0));
+	colors.resize(particleCount, particleColor);
 	sizes.resize(particleCount, 0);
 	uvs.resize(particleCount, glm::vec4{ 0.0f,0.0f,1.0f,1.0f });
 
 	emitter = [&](Particle& p) {
-		p.position = glm::vec3(getGameObject()->getPosition(),0);
+		p.position = glm::vec3(getGameObject()->getPosition(), 0);
 		p.velocity = glm::vec3(0);//glm::sphericalRand(1.0f);
 		p.rotation = 0;
 		p.angularVelocity = 0;
 	};
 
-	colorInterpolation = [](const Particle& p) {
-		return glm::vec4(1, 1, 1, 1);
+	colorInterpolation = [&](const Particle& p) {
+		return glm::mix(particleColor, particleColor, 1.0f);
 	};
 
 	sizeInterpolation = [](const Particle& p) {
@@ -37,7 +37,7 @@ void ParticleSystemComponent::init(int particleCount, std::shared_ptr<sre::Textu
 	// preallocate arrays for mesh data
 	for (int i = 0; i < particleCount; i++) {
 		positions[i] = glm::vec3(i*0.1f, i*0.1f, i*0.1f);
-		colors[i] = glm::vec4(1, 1, 1, 1);
+		colors[i] = particleColor;
 		sizes[i] = 100;
 		particles[i].index = i;
 	}
@@ -84,7 +84,7 @@ void ParticleSystemComponent::draw(sre::RenderPass& pr, glm::mat4 transform) {
 		auto &p = particles[i];
 		sizes[i] = p.alive ? sizeInterpolation(p) : 0;
 		positions[i] = p.position;
-		colors[i] = colorInterpolation(p);
+		//colors[i] = colorInterpolation(p);
 		uvs[i].w = p.rotation;
 	}
 	mesh->update()

@@ -15,7 +15,7 @@
 class ParticleSystemComponent : public Component {
 public:
     ParticleSystemComponent(GameObject *gameObject);
-	void init(int particleCount, std::shared_ptr<sre::Texture> texture);
+	void init(int particleCount, std::shared_ptr<sre::Texture> texture, glm::vec4 particleColor);
     void update(float deltaTime);
 
     void draw(sre::RenderPass& pr, glm::mat4 transform = glm::mat4(1));
@@ -45,6 +45,7 @@ private:
     float time = 0;
     float emissions = 0;
     int particleIndex = 0;
+	//glm::vec4 particleColor;
     std::vector<Particle> particles;
     std::shared_ptr<sre::Mesh> mesh;
     std::vector<glm::vec3> positions;
