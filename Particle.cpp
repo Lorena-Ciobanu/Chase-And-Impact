@@ -5,18 +5,12 @@
 #include "Particle.hpp"
 #include <limits>
 
-Particle::Particle(glm::vec3& position, glm::vec4 &color, float &size, glm::vec4 &uv)
-	:position(position), timeOfBirth(-std::numeric_limits<float>::max()),
-	alive(false), color(color), uv(uv), size(size)
+Particle::Particle()
+:timeOfBirth(-std::numeric_limits<float>::max()),
+ alive(false)
 {
 }
 
 int Particle::getIndex() {
-	return index;
-}
-
-void Particle::setIndex(int newIndex)
-{
-	assert(newIndex >= 0);
-	index = newIndex;
+    return index;
 }

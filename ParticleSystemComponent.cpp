@@ -11,17 +11,13 @@ ParticleSystemComponent::ParticleSystemComponent(GameObject *gameObject) : Compo
 
 void ParticleSystemComponent::init(int particleCount, std::shared_ptr<sre::Texture> texture)
 {
+	particles.resize(particleCount);
+	material = sre::Shader::getStandardParticles()->createMaterial();
+	material->setTexture(texture);
 	positions.resize(particleCount, glm::vec3(0, 0, 0));
-	colors.resize(particleCount, glm::vec4(1, 1, 1, 1));
+	colors.resize(particleCount, glm::vec4(0, 0, 0, 0));
 	sizes.resize(particleCount, 0);
 	uvs.resize(particleCount, glm::vec4{ 0.0f,0.0f,1.0f,1.0f });
-	
-	for (int i=0;i<particleCount;i++){
-		particles.emplace_back(positions[i], colors[i], sizes[i], uvs[i]);
-	}
-
-    material = sre::Shader::getStandardParticles()->createMaterial();
-    material->setTexture(texture);
 
 	emitter = [&](Particle& p) {
 		p.position = glm::vec3(getGameObject()->getPosition(),0);
