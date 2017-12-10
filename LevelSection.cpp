@@ -127,9 +127,8 @@ int LevelSection::getRandomNumberInRange(int low, int high)
 LevelSection::~LevelSection()
 {
 	for (int i = 0; i < platforms.size(); i++) {
-		game->destroyGameObject(platforms[i].get());
-
-		/*	Since out platforms are created out of a bigger number of tiles,
+		/*	
+		Since out platforms are created out of a bigger number of tiles,
 		each with their own gameObjectwe need to remove those as well
 		*/
 
@@ -142,5 +141,7 @@ LevelSection::~LevelSection()
 			}
 
 		}
+
+		game->destroyGameObject(platforms[i].get());
 	} 
 }

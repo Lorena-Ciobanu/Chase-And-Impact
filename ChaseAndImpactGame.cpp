@@ -38,7 +38,9 @@ ChaseAndImpactGame::ChaseAndImpactGame() :debugDraw(physicsScale)
 	textures.push_back(Texture::getWhiteTexture());
 
 	//backgroundColor = glm::vec4(0.119, 0.778, 1.000, 0.8);
-	backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+//	backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+//	backgroundColor = glm::vec4(0.054, 0.215, 0.207, 1);
+	backgroundColor = glm::vec4(0.022, 0.214, 0.275, 1);
 
 	spriteAtlas = SpriteAtlas::create("platformer-art-deluxe.json", "platformer-art-deluxe.png");
 
@@ -86,8 +88,8 @@ void ChaseAndImpactGame::initLevel() {
 	camera = camObj->addComponent<SideScrollingCamera>();
 	camera->setFollowObject(boulderObj, { 450 ,windowSize.y*0.5f });
 
-	initPlayerObject("Player 1", 19, glm::vec2{ 9.5, 2.5 }, ImVec4(255, 255, 255, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
-	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
+	initPlayerObject("Player 1", 19, glm::vec2{ 9.5, 2.5 }, ImVec4(255, 255, 255, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 0.7f), SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
+	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
 
 }
 
