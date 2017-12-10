@@ -21,6 +21,14 @@ void Level::updateLevel()
 	addSection();
 }
 
+void Level::resetLevel()
+{
+	while (!levelSections.empty()) {
+		levelSections.pop();
+	}
+	currentSectionIndex = 0;
+}
+
 float Level::getCurrentUpdatePosition()
 {
 	return levelSections.front()->getEndBound();

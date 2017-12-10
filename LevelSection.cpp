@@ -128,5 +128,19 @@ LevelSection::~LevelSection()
 {
 	for (int i = 0; i < platforms.size(); i++) {
 		game->destroyGameObject(platforms[i].get());
-	}
+
+		/*	Since out platforms are created out of a bigger number of tiles,
+		each with their own gameObjectwe need to remove those as well
+		*/
+
+		auto platformComponent = platforms[i].get()->getComponent<PlatformComponent>();
+		if (platformComponent) {
+			auto tiles = platformComponent->getTiles();
+			for (auto & tilesIt = tiles.begin(); tilesIt != tiles.end(); tilesIt++) {
+				auto ptr = tilesIt->get();
+				game->destroyGameObject(ptr);
+			}
+
+		}
+	} 
 }

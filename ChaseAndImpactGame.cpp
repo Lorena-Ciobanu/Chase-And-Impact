@@ -23,7 +23,7 @@ const glm::vec2 ChaseAndImpactGame::windowSize(900, 440);
 
 ChaseAndImpactGame* ChaseAndImpactGame::instance = nullptr;
 
-ChaseAndImpactGame::ChaseAndImpactGame() :debugDraw(physicsScale)
+ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 {
 	instance = this;
 	r.setWindowSize(windowSize);
@@ -37,13 +37,13 @@ ChaseAndImpactGame::ChaseAndImpactGame() :debugDraw(physicsScale)
 	textures.push_back(Texture::getSphereTexture());
 	textures.push_back(Texture::getWhiteTexture());
 
-	//backgroundColor = glm::vec4(0.119, 0.778, 1.000, 0.8);
-	backgroundColor = glm::vec4(0.0, 0.0, 0.0, 1.0);
+	backgroundColor = glm::vec4(0.119, 0.778, 1.000, 0.8);
 
 	spriteAtlas = SpriteAtlas::create("platformer-art-deluxe.json", "platformer-art-deluxe.png");
 
 	level = std::shared_ptr<Level>(new Level(this, spriteAtlas));
 
+	initPhysics();
 	initLevel();
 
 	// setup callback functions
@@ -61,7 +61,7 @@ ChaseAndImpactGame::ChaseAndImpactGame() :debugDraw(physicsScale)
 }
 
 void ChaseAndImpactGame::initLevel() {
-	initPhysics();
+
 
 	level->generateLevel();
 
@@ -75,7 +75,7 @@ void ChaseAndImpactGame::initLevel() {
 	boulder.setScale(glm::vec2(1.5f, 1.5f));
 	boulderSpriteComponent->setSprite(boulder);
 	boulderMovement = boulderObj->addComponent<BoulderMovementComponent>().get();
-	boulderMovement->init(physicsScale, 195.0f, glm::vec2(0.0f, 7.1f), 1.0f);
+	boulderMovement->init(physicsScale, 195.0f, glm::vec2(0.0f, 7.1f),1.0f);
 	boulderMovement->CanMove = true;
 	boulderMovement->setGameInstance(this);
 
@@ -85,8 +85,8 @@ void ChaseAndImpactGame::initLevel() {
 	camera = camObj->addComponent<SideScrollingCamera>();
 	camera->setFollowObject(boulderObj, { 450 ,windowSize.y*0.5f });
 
-	initPlayerObject("Player 1", 19, glm::vec2{ 9.5, 2.5 }, ImVec4(255, 255, 255, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
-	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
+	initPlayerObject("Player 1", 19, glm::vec2{ 9.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_w), SDL_Keycode(SDLK_a), SDL_Keycode(SDLK_d));
+	initPlayerObject("Player 2", 19, glm::vec2{ 10.5, 2.5 }, ImVec4(255, 255, 255, 1.0f),SDL_Keycode(SDLK_UP), SDL_Keycode(SDLK_LEFT), SDL_Keycode(SDLK_RIGHT));
 
 }
 
@@ -96,27 +96,26 @@ void ChaseAndImpactGame::initLevel() {
 * int spriteAtlastStartIndex: The Start Index of the sprite used.
 * glm::vec2 startPosition: The start position of the player object (Level::tileSize already factored in).
 * ImVec4 nameplateColor: Vector deciding the color of the text appearing over the players head.
-* glm::vec4 trailColor: Vector deciding the color of the Particle Trail following the player
 * SDL_Keycode upKey: The key used to jump.
 * SDL_Keycode leftKey: The key used to go left.
 * SDL_Keycode rightKey: The key used to go right.
 */
-void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition, ImVec4 nameplateColor, glm::vec4 trailColor,
+void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtlasStartIndex, glm::vec2 startPosition, ImVec4 nameplateColor,
 	SDL_Keycode upKey, SDL_Keycode leftKey, SDL_Keycode rightKey) {
 	auto player = createGameObject();
 	player->name = playerName;
-	player->position = startPosition * Level::tileSize;
+	player->position = startPosition*Level::tileSize;
 
 	auto playerSprite = player->addComponent<SpriteComponent>();
 	auto playerSpriteObj = spriteAtlas->get(std::to_string(spriteAtlasStartIndex) + ".png");
 	playerSprite->setSprite(playerSpriteObj);
-
+	
 
 	auto characterController = player->addComponent<CharacterControllerComponent>();
 	characterController->init(physicsScale, 10, b2BodyType::b2_dynamicBody, startPosition, 1.0f);
 
 	auto particleSystem = player->addComponent<ParticleSystemComponent>();
-	particleSystem->init(500, textures[0], trailColor);
+	particleSystem->init(500, textures[0]);
 	particleSystem->gravity = { 0,-.2,0 };
 	particleSystem->lifeSpan = 2.0f;
 
@@ -124,7 +123,7 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 	auto namePlate = player->addComponent<NameplateComponent>();
 	const char* nameS = player->name.c_str();
 	namePlate->init(nameS, windowSize.x, windowSize.y, 32.0f, nameplateColor, camera.get());
-
+	
 	characterController->setKeyCodes(upKey, leftKey, rightKey);
 
 	characterController->setSprites(
@@ -136,7 +135,7 @@ void ChaseAndImpactGame::initPlayerObject(std::string playerName, int spriteAtla
 		spriteAtlas->get(std::to_string(spriteAtlasStartIndex + 5) + ".png")
 	);
 
-
+	
 }
 
 void ChaseAndImpactGame::update(float time) {
@@ -222,7 +221,11 @@ void ChaseAndImpactGame::onKey(SDL_Event &event) {
 				world->SetDebugDraw(nullptr);
 			}
 			break;
+		case SDLK_ESCAPE:
+			resetGame();
+			break;
 		}
+		
 	}
 }
 
@@ -263,27 +266,21 @@ void ChaseAndImpactGame::destroyGameObjects()
 
 			if (gameObjectPair != sceneObjects.end()) {
 
-				/*	Since out platforms are created out of a bigger number of tiles,
-					each with their own gameObjectwe need to remove those as well
-				*/
-
-				auto platformComponent = gameObjectPair->second->getComponent<PlatformComponent>();
-				auto tiles = platformComponent->getTiles();
-
-				for (auto & tilesIt = tiles.begin(); tilesIt != tiles.end(); tilesIt++) {
-					auto ptr = tilesIt->get();
-					if (sceneObjects.find(ptr) != sceneObjects.end()) {
-						sceneObjects.erase(ptr);
-					}
-				}
-
-
 				sceneObjects.erase(gameObjectPair);
 			}
 		}
 
 		markedForDestroy.clear();
 	}
+}
+
+void ChaseAndImpactGame::resetGame()
+{
+	level->resetLevel();
+	markedForDestroy.clear();
+	sceneObjects.clear();
+
+	initLevel();
 }
 
 void ChaseAndImpactGame::initPhysics() {
@@ -346,7 +343,7 @@ void ChaseAndImpactGame::handleContact(b2Contact *contact, bool begin) {
 				c->onCollisionEnd(physA->second);
 			}
 		}
-	}
+	}	
 }
 
 void ChaseAndImpactGame::endGame(std::string loser) {
