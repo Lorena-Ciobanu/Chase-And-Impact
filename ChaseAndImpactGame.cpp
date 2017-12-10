@@ -43,6 +43,7 @@ ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 
 	level = std::shared_ptr<Level>(new Level(this, spriteAtlas));
 
+	initPhysics();
 	initLevel();
 
 	// setup callback functions
@@ -60,7 +61,7 @@ ChaseAndImpactGame::ChaseAndImpactGame():debugDraw(physicsScale)
 }
 
 void ChaseAndImpactGame::initLevel() {
-	initPhysics();
+
 
 	level->generateLevel();
 
@@ -220,7 +221,11 @@ void ChaseAndImpactGame::onKey(SDL_Event &event) {
 				world->SetDebugDraw(nullptr);
 			}
 			break;
+		case SDLK_ESCAPE:
+			resetGame();
+			break;
 		}
+		
 	}
 }
 
@@ -261,27 +266,21 @@ void ChaseAndImpactGame::destroyGameObjects()
 
 			if (gameObjectPair != sceneObjects.end()) {
 
-				/*	Since out platforms are created out of a bigger number of tiles,
-					each with their own gameObjectwe need to remove those as well 
-				*/
-
-				auto platformComponent = gameObjectPair->second->getComponent<PlatformComponent>();
-				auto tiles = platformComponent->getTiles();
-
-				for (auto & tilesIt = tiles.begin(); tilesIt != tiles.end(); tilesIt++) {
-					auto ptr = tilesIt->get();
-					if (sceneObjects.find(ptr) != sceneObjects.end()) {
-						sceneObjects.erase(ptr);
-					}
-				}
-		
-
 				sceneObjects.erase(gameObjectPair);
 			}
 		}
 
 		markedForDestroy.clear();
 	}
+}
+
+void ChaseAndImpactGame::resetGame()
+{
+	level->resetLevel();
+	markedForDestroy.clear();
+	sceneObjects.clear();
+
+	initLevel();
 }
 
 void ChaseAndImpactGame::initPhysics() {

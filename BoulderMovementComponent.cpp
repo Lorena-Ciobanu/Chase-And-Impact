@@ -64,10 +64,12 @@ void BoulderMovementComponent::onCollisionStart(PhysicsComponent *comp) {
 	if (compName == "Player 1" || compName == "Player 2")
 	{
 		auto playerSpriteRenderer = comp->getGameObject()->getComponent<SpriteComponent>();
-		comp->getGameObject()->removeComponent(playerSpriteRenderer);
 
+		game->destroyGameObject(comp->getGameObject());
 		// TODO Maybe add a particle effect
 		CanMove = false;
+
+
 
 		game->endGame(compName); 
 	}

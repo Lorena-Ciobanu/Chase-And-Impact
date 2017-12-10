@@ -61,6 +61,8 @@ private:
 
 	void destroyGameObjects();
 
+	void resetGame();
+
 	std::shared_ptr<SideScrollingCamera> camera;
 	std::shared_ptr<sre::SpriteAtlas> spriteAtlas;
 	std::vector<std::shared_ptr<sre::Texture>> textures;

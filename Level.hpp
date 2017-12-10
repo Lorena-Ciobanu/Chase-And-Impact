@@ -29,6 +29,8 @@ public:
 
 	void updateLevel();
 
+	void resetLevel();
+
 	float getCurrentUpdatePosition();
 
 	~Level();
