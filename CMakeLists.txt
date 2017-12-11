@@ -23,8 +23,6 @@ target_link_libraries(ChaseAndImpact ${all_libs})
 # copy files to dest
 file(COPY platformer-art-deluxe.json platformer-art-deluxe.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 file(COPY platformer-art-deluxe.json platformer-art-deluxe.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
-file(COPY sprites.json sprites.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-file(COPY sprites.json sprites.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 
 IF (WIN32)
     # Copy dll files to ${CMAKE_CURRENT_BINARY_DIR}/Debug
